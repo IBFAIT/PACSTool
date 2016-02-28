@@ -1,0 +1,10 @@
+Patient Name,Patient ID,Exam ID,Series ID,Technique,Type
+Thomas Re,1309,336,3624,CT,Thorax
+Thomas Re,1309,3795,1472,CT,Thorax
+Flavio Trolese,2496,783,40,CT,Thorax
+Kevin Mader,2065,3483,2214,MRI,Breast
+Kevin Mader,2065,3679,3172,CT,Breast
+Kevin Mader,2065,3035,1004,MRI,Thorax
+Kevin Mader,2065,3027,1935,CT,Thorax
+Kevin Mader,2065,965,3152,MRI,Thorax
+Kevin Mader,2065,3852,70,CT,Breast
