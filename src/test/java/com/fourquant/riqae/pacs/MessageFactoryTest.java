@@ -32,9 +32,9 @@ public class MessageFactoryTest {
                 getClass().getResource("/testRequest.csv").getFile());
 
     final Set<String> patientNames = message.getPatientNames();
-    assertTrue(patientNames.contains("Thomas Re"));
-    assertTrue(patientNames.contains("Kevin Mader"));
-    assertTrue(patientNames.contains("Flavio Trolese"));
+    assertTrue(patientNames.contains("Ashlee Simpson"));
+    assertTrue(patientNames.contains("Kate Moss"));
+    assertTrue(patientNames.contains("Donatella Versace"));
     assertFalse(patientNames.contains("Patient Name"));
   }
 }
