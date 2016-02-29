@@ -10,13 +10,16 @@ public final class PACSFacade {
   private static final Logger log =
         Logger.getLogger(PACSFacade.class.getName());
 
-  private String server;
+  private final String server;
 
-  private int port;
+  private final int port;
 
-  public PACSFacade(String server, int port) {
+  private final String user;
+
+  public PACSFacade(final String server, final int port, final String user) {
     this.server = server;
     this.port = port;
+    this.user = user;
   }
 
   public final String getServer() {
@@ -27,18 +30,22 @@ public final class PACSFacade {
     return port;
   }
 
+  public final String getUser() {
+    return user;
+  }
+
   /*
-    Processing faked
-    Does not establish no connection to no PACS server at the moment
-    Populates responseMessage with random values
+      Processing faked
+      Does not establish no connection to no PACS server at the moment
+      Populates responseMessage with random values
 
-    this is probably the place where we will have our real queries later...
-    findscu -c DCMQRSCP@localhost:11112 -m PatientName=Doe^John -m
-      StudyDate=20110510- -m ModalitiesInStudy=CT
+      this is probably the place where we will have our real queries later...
+      findscu -c DCMQRSCP@localhost:11112 -m PatientName=Doe^John -m
+        StudyDate=20110510- -m ModalitiesInStudy=CT
 
-      Query Query/Retrieve Service Class Provider DCMQRSCP listening on local
-      port 11112 for CT Studies for Patient John Doe since 2011-05-10
-   */
+        Query Query/Retrieve Service Class Provider DCMQRSCP listening on local
+        port 11112 for CT Studies for Patient John Doe since 2011-05-10
+     */
   public final Message process(final Message request) {
 
     log.fine("connecting to PACS (" + getServer() + ":" + getPort() + ")");

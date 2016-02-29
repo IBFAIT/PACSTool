@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public final class PACSTool {
+  public static final int PACS_SERVER_PORT_DEFAULT = 9090;
+  public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
+  public static final String PACS_SERVER_USER_DEFAULT = "admin";
 
   private static final Logger log =
         Logger.getLogger(PACSTool.class.getName());
@@ -16,13 +19,19 @@ public final class PACSTool {
         names = {"-server", "-s"},
         description = "PACS server IP address",
         required = false)
-  private String server = "localhost";
+  private String server = PACS_SERVER_ADDRESS_DEFAULT;
 
   @Parameter(
         names = {"-port", "-p"},
         description = "PACS server port number",
         required = false)
-  private int port = 9090;
+  private int port = PACS_SERVER_PORT_DEFAULT;
+
+  @Parameter(
+        names = {"-user", "-u"},
+        description = "PACS server user",
+        required = false)
+  private String user = PACS_SERVER_USER_DEFAULT;
 
 
   @Parameter(
@@ -55,7 +64,7 @@ public final class PACSTool {
 
   public PACSTool(String[] args) {
     jCommander = new JCommander(this, args);
-    pacsFacade = new PACSFacade(server, port);
+    pacsFacade = new PACSFacade(server, port, user);
   }
 
   private PACSTool() {

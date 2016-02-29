@@ -7,8 +7,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class PACSFacadeTest {
+  private final static String server = "localhost";
+  private final static int port = 8924;
+  private final static String user = "admin";
+  private final static String victimsName = "John Doe";
 
-  private PACSFacade pacsFacade = new PACSFacade("localhost", 8924);
+  private PACSFacade pacsFacade = new PACSFacade(server, port, user);
 
   @Test
   public void testResponseNotNull() {
@@ -22,7 +26,7 @@ public class PACSFacadeTest {
 
     Message pacsRequest = new Message();
     final Row john = new Row();
-    john.setPatientName("John Doe");
+    john.setPatientName(victimsName);
     pacsRequest.add(john);
 
     Message message = pacsFacade.process(pacsRequest);
@@ -30,16 +34,16 @@ public class PACSFacadeTest {
     Row row = message.iterator().next();
     assertNotNull(row);
 
-    assertEquals("John Doe", row.getPatientName());
+    assertEquals(victimsName, row.getPatientName());
   }
 
   @Test
   public void testGetServer() throws Exception {
-    assertEquals("localhost", pacsFacade.getServer());
+    assertEquals(server, pacsFacade.getServer());
   }
 
   @Test
   public void testGetPort() throws Exception {
-    assertEquals(8924, pacsFacade.getPort());
+    assertEquals(port, pacsFacade.getPort());
   }
 }
