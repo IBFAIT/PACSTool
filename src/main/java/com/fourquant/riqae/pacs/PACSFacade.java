@@ -31,6 +31,11 @@ public final class PACSFacade {
     Processing faked
     Does not establish no connection to no PACS server at the moment
     Populates responseMessage with random values
+
+    this is probably the place where we will have our real queries later...
+    findscu -k 0008,0050="21706874" -v -S -k 0010,0010 -k 0010,0020 -k 0008,1030
+        -k 0008,103E -k 0008,0052="SERIES" -k 0020,000D -k 0020,000e
+        -X -aet MC526512 -aec GEPACS 10.247.12.145 4100
    */
   public final Message process(final Message request) {
 
