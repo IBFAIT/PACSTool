@@ -33,9 +33,11 @@ public final class PACSFacade {
     Populates responseMessage with random values
 
     this is probably the place where we will have our real queries later...
-    findscu -k 0008,0050="21706874" -v -S -k 0010,0010 -k 0010,0020 -k 0008,1030
-        -k 0008,103E -k 0008,0052="SERIES" -k 0020,000D -k 0020,000e
-        -X -aet MC526512 -aec GEPACS 10.247.12.145 4100
+    findscu -c DCMQRSCP@localhost:11112 -m PatientName=Doe^John -m
+      StudyDate=20110510- -m ModalitiesInStudy=CT
+
+      Query Query/Retrieve Service Class Provider DCMQRSCP listening on local
+      port 11112 for CT Studies for Patient John Doe since 2011-05-10
    */
   public final Message process(final Message request) {
 
