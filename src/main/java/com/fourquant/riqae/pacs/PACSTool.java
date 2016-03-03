@@ -3,92 +3,66 @@ package com.fourquant.riqae.pacs;
 
 import org.apache.commons.cli.*;
 
-import java.util.logging.Logger;
+import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
+import static java.lang.Integer.parseInt;
 
 public final class PACSTool {
   public static final int PACS_SERVER_PORT_DEFAULT = 9090;
   public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
   public static final String PACS_SERVER_USER_DEFAULT = "john";
 
-  private static final Logger log =
-        Logger.getLogger(PACSTool.class.getName());
+  public static final String optPort = "p";
+  public static final String longOptPort = "port";
 
-  private final PACSFacade pacsFacade;
+  public static final String optServer = "s";
+  public static final String longOptServer = "server";
 
-  public PACSTool(final PACSFacade pacsFacade) {
-    this.pacsFacade = pacsFacade;
-  }
+  public static final String optUser = "u";
+  public static final String longOptUser = "user";
+
+  public static final String optOutputFile = "o";
+  public static final String longOptOutputFile = "output-file";
+
+  public static final String optPatientName = "pn";
+  public static final String longOptPatientName = "patient-name";
+
+  public static final String optPatientNamesFile = "pnf";
+  public static final String longOptPatientNamesFile = "patient-names-file";
+
+  public static final String optHelp = "h";
 
   public static void main(final String[] args) throws ParseException {
 
-    final Options options = OptionsFactory.createOptions();
-    final CommandLineParser parser = new DefaultParser();
-    final CommandLine line = parser.parse(options, args);
-
-    if (!hasPatientNames(line) || isHelp(line)) {
-      new HelpFormatter().
-            printHelp("PACSTool", options);
+    final CommandLineProcessor clp = new CommandLineProcessor(args);
+    if (!clp.callIsValid()) {
+      clp.printHelp();
       return;
     }
 
-    final String server;
-    if (has("s", line))
-      server = line.getOptionValue("s");
-    else
-      server = PACS_SERVER_ADDRESS_DEFAULT;
-
-    final int port;
-    if (has("p", line))
-      port = Integer.parseInt(line.getOptionValue("p"));
-    else
-      port = PACS_SERVER_PORT_DEFAULT;
-
-    final String user;
-    if (has("u", line))
-      user = line.getOptionValue("u");
-    else
-      user = PACS_SERVER_USER_DEFAULT;
-
-    final PACSTool pacsTool =
-          new PACSTool(PACSFacadeFactory.createFactory(server, port, user));
+    final String server = clp.getServer();
+    final int port = clp.getPort();
+    final String user = clp.getUser();
+    final String outputFile = clp.getOutputFile();
+    final String patientNamesFile = clp.getPatientnamesfile();
+    final String[] patientNames = clp.getPatientNames();
 
     final Message pacsRequest;
-    if (line.hasOption("pnf")) {
-      pacsRequest = RequestFactory.createRequest(line.getOptionValue("pnf"));
-    } else if (line.hasOption("pn")) {
-      pacsRequest = RequestFactory.createRequest(line.getOptionValues("pn"));
 
+    if (clp.patientNamesFileSet()) {
+      pacsRequest = createRequest(patientNamesFile);
+    } else if (clp.patientNamesSet()) {
+      pacsRequest = createRequest(patientNames);
     } else {
-      new HelpFormatter().
-            printHelp("PACSTool", options);
-      return;
+      throw new IllegalStateException();
     }
 
-    final Message pacsResponse = pacsTool.process(pacsRequest);
-    if (outputFileSet(line))
-      ResponseWriter.write(pacsResponse, line.getOptionValue("o"));
-    else
+    final Message pacsResponse = PACSFacadeFactory.createFactory(
+          server, port, user).process(pacsRequest);
+
+    if (clp.outputFileSet()) {
+      ResponseWriter.write(pacsResponse, outputFile);
+    } else
       ResponseWriter.write(pacsResponse);
-  }
-
-  private static boolean outputFileSet(final CommandLine line) {
-    return line.hasOption("o");
-  }
-
-  private static boolean isHelp(final CommandLine line) {
-    return line.hasOption("h");
-  }
-
-  private static boolean hasPatientNames(final CommandLine line) {
-    return line.hasOption("pn") || line.hasOption("pnf");
-  }
-
-  private static boolean has(final String parameter, final CommandLine line) {
-    return line.hasOption(parameter);
-  }
-
-  private Message process(final Message pacsRequest) {
-    return pacsFacade.process(pacsRequest);
   }
 
   static final class ResponseWriter {
@@ -104,6 +78,94 @@ public final class PACSTool {
 
       final MessageWriter writer = new MessageWriter();
       writer.write(pacsResponse);
+    }
+  }
+
+  static final class CommandLineProcessor {
+    final CommandLine line;
+    final Options options;
+
+    public CommandLineProcessor(final String[] args) throws ParseException {
+      options = OptionsFactory.createOptions();
+      final CommandLineParser parser = new DefaultParser();
+      line = parser.parse(options, args);
+    }
+
+    public String getServer() {
+
+      final String server;
+      if (has(optServer))
+        server = line.getOptionValue(optServer);
+      else
+        server = PACS_SERVER_ADDRESS_DEFAULT;
+
+      return server;
+    }
+
+    public int getPort() {
+      final int port;
+      if (has(optPort))
+        port = parseInt(line.getOptionValue(optPort));
+      else
+        port = PACS_SERVER_PORT_DEFAULT;
+
+      return port;
+    }
+
+    public String getUser() {
+
+      final String user;
+      if (has(optUser))
+        user = line.getOptionValue(optUser);
+      else
+        user = PACS_SERVER_USER_DEFAULT;
+
+      return user;
+    }
+
+    private boolean outputFileSet() {
+      return line.hasOption(optOutputFile);
+    }
+
+    private boolean isHelp() {
+      return line.hasOption(optHelp);
+    }
+
+    private boolean hasPatientNames() {
+      return line.hasOption(optPatientName) || line.hasOption(optPatientNamesFile);
+    }
+
+    public String[] getPatientNames() {
+      return line.getOptionValues(optPatientName);
+    }
+
+    public String getPatientnamesfile() {
+      return line.getOptionValue(optPatientNamesFile);
+    }
+
+    public String getOutputFile() {
+      return line.getOptionValue(optOutputFile);
+    }
+
+    private boolean has(final String parameter) {
+      return line.hasOption(parameter);
+    }
+
+    public boolean callIsValid() {
+      return !isHelp() && hasPatientNames();
+    }
+
+    public void printHelp() {
+      new HelpFormatter().
+            printHelp("PACSTool", options);
+    }
+
+    public boolean patientNamesFileSet() {
+      return line.hasOption(optPatientNamesFile);
+    }
+
+    public boolean patientNamesSet() {
+      return line.hasOption(optPatientName);
     }
   }
 
@@ -127,7 +189,6 @@ public final class PACSTool {
     static Message createRequest(final String[] patientNames) {
       return factory.create(patientNames);
     }
-
   }
 
   //todo introduce optiongroups
@@ -135,55 +196,55 @@ public final class PACSTool {
     static Options createOptions() {
       final Options options = new Options();
 
-      options.addOption(Option.builder("s")
+      options.addOption(Option.builder(optServer)
             .hasArg()
             .argName("ip")
             .required(false)
-            .longOpt("server")
+            .longOpt(longOptServer)
             .desc("PACS server IP address")
             .build());
 
-      options.addOption(Option.builder("p")
+      options.addOption(Option.builder(optPort)
             .hasArg()
             .argName("port")
             .required(false)
-            .longOpt("port")
+            .longOpt(longOptPort)
             .desc("PACS server port number")
             .build());
 
-      options.addOption(Option.builder("u")
+      options.addOption(Option.builder(optUser)
             .hasArg()
             .argName("username")
             .required(false)
-            .longOpt("user")
+            .longOpt(longOptUser)
             .desc("PACS server user")
             .build());
 
-      options.addOption(Option.builder("pn")
+      options.addOption(Option.builder(optPatientName)
             .hasArg()
             .argName("patientname")
             .required(false)
-            .longOpt("patient-name")
+            .longOpt(longOptPatientName)
             .desc("Patient name")
             .build());
 
-      options.addOption(Option.builder("pnf")
+      options.addOption(Option.builder(optPatientNamesFile)
             .hasArg()
             .argName("patientnamesfile")
             .required(false)
-            .longOpt("patient-names-file")
+            .longOpt(longOptPatientNamesFile)
             .desc("Patient names file")
             .build());
 
-      options.addOption(Option.builder("o")
+      options.addOption(Option.builder(optOutputFile)
             .hasArg()
             .argName("file")
             .required(false)
-            .longOpt("output-file")
+            .longOpt(longOptOutputFile)
             .desc("Output file name")
             .build());
 
-      options.addOption(Option.builder("h")
+      options.addOption(Option.builder(optHelp)
             .required(false)
             .longOpt("help")
             .desc("This help message")

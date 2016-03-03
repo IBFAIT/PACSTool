@@ -9,6 +9,9 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
+import static com.fourquant.riqae.pacs.PACSTool.optPatientName;
+import static com.fourquant.riqae.pacs.PACSTool.optPatientNamesFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -48,7 +51,8 @@ public class PACSToolTest {
     final String userExpected = "admin";
 
     final PACSFacade factory =
-          PACSFacadeFactory.createFactory(serverExpected, portExpected, userExpected);
+          PACSFacadeFactory.createFactory(
+                serverExpected, portExpected, userExpected);
 
     final String serverActual = factory.getServer();
     final int portActual = factory.getPort();
@@ -101,12 +105,13 @@ public class PACSToolTest {
   public void testResponseWriter() {
     final CommandLineParser parser = new DefaultParser();
     final Options options = PACSTool.OptionsFactory.createOptions();
-    String[] args = new String[]{"-pn", "John Doe"};
+    String[] args = new String[]{"-" + optPatientName, "John Doe"};
     final CommandLine line;
     try {
       line = parser.parse(options, args);
 
-      final Message request = PACSTool.RequestFactory.createRequest(line.getOptionValues("pn"));
+      final Message request =
+            createRequest(line.getOptionValues(optPatientName));
 
       final PACSFacade pacsFacade = new PACSFacade("localhost", 2133, "admin");
       final Message response = pacsFacade.process(request);
@@ -125,16 +130,18 @@ public class PACSToolTest {
     final CommandLineParser parser = new DefaultParser();
     final Options options = PACSTool.OptionsFactory.createOptions();
 
-    //todo set relative path
     final String[] args = new String[]{
           "-patient-names-file",
-          "/Users/nonlo/IdeaProjects/ToolB/src/test/resources/testRequest.csv"};
+          getClass().getResource("/testRequest.csv").getFile()};
+
+
+
     final CommandLine line;
     try {
       line = parser.parse(options, args);
 
-      String pnf = line.getOptionValue("pnf");
-      final Message request = PACSTool.RequestFactory.createRequest(pnf);
+      String pnf = line.getOptionValue(optPatientNamesFile);
+      final Message request = createRequest(pnf);
 
       final PACSFacade pacsFacade = new PACSFacade("localhost", 2133, "admin");
       final Message response = pacsFacade.process(request);
@@ -154,11 +161,9 @@ public class PACSToolTest {
     assertEquals("hello", outContent.toString());
   }
 
-
   @Test
   public void testErr() {
     System.err.print("hello again");
     assertEquals("hello again", errContent.toString());
   }
-
 }

@@ -33,7 +33,6 @@ public class MessageFactory {
     }
 
     return pacsRequest;
-
   }
 
   public final Message create(final String filePath) {
