@@ -83,6 +83,6 @@ public class MessageWriterTest {
   @Test(expected = IllegalStateException.class)
   public void testWriteWithException() throws Exception {
     final MessageWriter writer = new MessageWriter();
-    writer.write(new Message(), "/does/not/existx");
+    writer.write(new Message(), "/does/not/exist");
   }
 }

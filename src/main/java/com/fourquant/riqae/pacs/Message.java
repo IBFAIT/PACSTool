@@ -1,8 +1,13 @@
 package com.fourquant.riqae.pacs;
 
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
+
+import static java.util.stream.Collectors.toSet;
 
 public class Message implements Iterable<Message.Row> {
   private static final Logger log =
@@ -20,11 +25,8 @@ public class Message implements Iterable<Message.Row> {
   }
 
   public Set<String> getPatientNames() {
-    final Set<String> patientNames = new HashSet<>();
-    for (Row row : list) {
-      patientNames.add(row.getPatientName());
-    }
-    return patientNames;
+    return list.stream().map(
+          Row::getPatientName).collect(toSet());
   }
 
   public static class Row {

@@ -12,7 +12,7 @@ public class PACSFacadeTest {
   private final static String user = "admin";
   private final static String victimsName = "John Doe";
 
-  private PACSFacade pacsFacade = new PACSFacade(server, port, user);
+  private final PACSFacade pacsFacade = new PACSFacade(server, port, user);
 
   @Test
   public void testResponseNotNull() {

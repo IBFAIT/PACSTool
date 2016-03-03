@@ -7,16 +7,21 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import static com.fourquant.riqae.pacs.Protocol.format;
 import static com.fourquant.riqae.pacs.Protocol.patientNameField;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public class MessageFactory {
   private static final Logger log =
         Logger.getLogger(MessageFactory.class.getName());
+
+  public final Message create(final String[] patientNames) {
+    return create(asList(patientNames));
+  }
 
   public final Message create(final List<String> patientNames) {
 
@@ -38,12 +43,9 @@ public class MessageFactory {
       final CSVParser csvParser = new CSVParser(in, format);
       final List<CSVRecord> records = csvParser.getRecords();
 
-      final List<String> patientNames = new ArrayList<>();
-
-      for (CSVRecord record : records) {
-        patientNames.add(record.get(patientNameField));
-      }
-      return create(patientNames);
+      return create(
+            records.stream().map(
+                  record -> record.get(patientNameField)).collect(toList()));
 
     } catch (IOException e) {
       throw new IllegalStateException(e);
