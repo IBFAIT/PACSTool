@@ -44,7 +44,7 @@ Usage: PACSTool [options]
 ## Input File Example
 
 ```
-Patient Name,Patient ID,Exam ID,Series ID,Technique,Type
+Patient Name,Patient ID,Study Instance UID,Series Instance UID,Technique,Type
 Kate Moss,,,,,
 Ashlee Simpson,,,,,
 Donatella Versace,,,,,
@@ -52,7 +52,7 @@ Donatella Versace,,,,,
 
 ## Output File Example
 ```
-Patient Name,Patient ID,Exam ID,Series ID,Technique,Type
+Patient Name,Patient ID,Study Instance UID,Series Instance UID,Technique,Type
 Kate Moss,1309,336,3624,CT,Thorax
 Kate Moss,1309,3795,1472,CT,Thorax
 Ashlee Simpson,2496,783,40,CT,Thorax

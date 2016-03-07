@@ -1,10 +1,8 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.Message.Row;
+import com.fourquant.riqae.pacs.CSVDoc.Row;
 
 import java.util.logging.Logger;
-
-import static java.lang.Math.random;
 
 public final class PACSFacade {
   private static final Logger log =
@@ -40,49 +38,46 @@ public final class PACSFacade {
       Populates responseMessage with random values
 
       this is probably the place where we will have our real queries later...
-      findscu -c DCMQRSCP@localhost:11112 -m PatientName=Doe^John -m
+      findscu -c DCMQRSCP@localhost:11112 -m PatientName=John^Doe -m
         StudyDate=20110510- -m ModalitiesInStudy=CT
 
         Query Query/Retrieve Service Class Provider DCMQRSCP listening on local
         port 11112 for CT Studies for Patient John Doe since 2011-05-10
      */
-  public final Message process(final Message request) {
+  public final CSVDoc process(final CSVDoc request) {
 
-    log.fine("connecting to PACS (" + getServer() + ":" + getPort() + ")");
+    final CSVDoc response = new CSVDoc();
+    final Executor executor = new Executor(getUser(), getServer(), getPort());
 
-    final Message response = new Message();
-    log.fine("response object created");
-
-    log.fine("populating response object...");
+    //for every patient...
     for (final Row requestRow : request) {
-      final int patientId = randomInt();
-      do {
-        Row row = new Row();
-        row.setPatientName(requestRow.getPatientName());
-        row.setPatientId(patientId);
-        row.setExamId(randomInt());
-        row.setSeriesId(randomInt());
-        row.setTechnique(randomTechnique());
-        row.setType(randomType());
 
+      //create findscu call
+      final String patientName = requestRow.getPatientName();
+      final FindScuCommandCreator findScuCommandCreator =
+            new FindScuCommandCreator();
+
+      final String findSCUCall =
+            findScuCommandCreator.createFindScuStatement(
+                  patientName, user, server, Integer.toString(port));
+
+      final FindScuCommandExecutorDummy findScuCommandExecutorDummy =
+            new FindScuCommandExecutorDummy();
+
+      //todo
+      final String resulttodo = findScuCommandExecutorDummy.execute(findSCUCall);
+
+      System.out.println("result = " + resulttodo);
+
+      /* execute findscucalls
+
+      */
+      final CSVDoc result = executor.execute(findSCUCall);
+      for (final Row row : result) {
         response.add(row);
-      } while (((int) (random() * 2)) > 0);
+      }
     }
 
-    log.fine("population done");
-
     return response;
-  }
-
-  private String randomType() {
-    return ((int) (random() * 2)) > 0 ? "Thorax" : "Breast";
-  }
-
-  private String randomTechnique() {
-    return ((int) (random() * 2)) > 0 ? "CT" : "MRI";
-  }
-
-  private int randomInt() {
-    return (int) (random() * 4141);
   }
 }

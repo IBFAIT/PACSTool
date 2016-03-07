@@ -1,12 +1,11 @@
 package com.fourquant.riqae.pacs;
 
-
 import org.apache.commons.cli.*;
 
-import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
 import static java.lang.Integer.parseInt;
 
-public final class PACSTool {
+public class FindScuCommandCreator {
+
   public static final int PACS_SERVER_PORT_DEFAULT = 9090;
   public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
   public static final String PACS_SERVER_USER_DEFAULT = "john";
@@ -20,20 +19,13 @@ public final class PACSTool {
   public static final String optUser = "u";
   public static final String longOptUser = "user";
 
-  public static final String optOutputFile = "o";
-  public static final String longOptOutputFile = "output-file";
-
   public static final String optPatientName = "pn";
   public static final String longOptPatientName = "patient-name";
-
-  public static final String optPatientNamesFile = "pnf";
-  public static final String longOptPatientNamesFile = "patient-names-file";
 
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
   public static void main(final String[] args) throws ParseException {
-
     final CommandLineProcessor clp = new CommandLineProcessor(args);
     if (!clp.callIsValid()) {
       clp.printHelp();
@@ -43,43 +35,33 @@ public final class PACSTool {
     final String server = clp.getServer();
     final int port = clp.getPort();
     final String user = clp.getUser();
-    final String outputFile = clp.getOutputFile();
-    final String patientNamesFile = clp.getPatientnamesfile();
     final String[] patientNames = clp.getPatientNames();
 
-    final CSVDoc pacsRequest;
+    final String[] findScuStatements =
+          new FindScuCommandCreator().createFindScuStatements(
+                patientNames, user, server, Integer.toString(port));
 
-    if (clp.patientNamesFileSet()) {
-      pacsRequest = createRequest(patientNamesFile);
-    } else if (clp.patientNamesSet()) {
-      pacsRequest = createRequest(patientNames);
-    } else {
-      throw new IllegalStateException();
+    for (final String findScuStatement : findScuStatements) {
+      System.out.println(findScuStatement);
     }
-
-    final CSVDoc pacsResponse = PACSFacadeFactory.createFactory(
-          server, port, user).process(pacsRequest);
-
-    if (clp.outputFileSet()) {
-      ResponseWriter.write(pacsResponse, outputFile);
-    } else
-      ResponseWriter.write(pacsResponse);
   }
 
-  static final class ResponseWriter {
-    static void write(final CSVDoc pacsResponse,
-                      final String outputFileName) {
-
-      final CSVDocWriter writer = new CSVDocWriter();
-      writer.write(pacsResponse, outputFileName);
+  public final String[] createFindScuStatements(
+        final String[] patientNames, final String user,
+        final String server, final String port) {
+    final String[] findScuCommands = new String[patientNames.length];
+    for (int i = 0; i < patientNames.length; i++) {
+      findScuCommands[i] = createFindScuStatement(
+            patientNames[i], user, server, port);
     }
+    return findScuCommands;
+  }
 
-    static void write(
-          final CSVDoc pacsResponse) {
-
-      final CSVDocWriter writer = new CSVDocWriter();
-      writer.write(pacsResponse);
-    }
+  public final String createFindScuStatement(
+        final String patientName, final String user,
+        final String server, final String port) {
+    return "findscu -c " + user + "@" + server + ":" + port +
+          " -m PatientName=" + patientName + "";
   }
 
   static final class CommandLineProcessor {
@@ -124,30 +106,6 @@ public final class PACSTool {
       return user;
     }
 
-    private boolean outputFileSet() {
-      return line.hasOption(optOutputFile);
-    }
-
-    private boolean isHelp() {
-      return line.hasOption(optHelp);
-    }
-
-    private boolean hasPatientNames() {
-      return line.hasOption(optPatientName) || line.hasOption(optPatientNamesFile);
-    }
-
-    public String[] getPatientNames() {
-      return line.getOptionValues(optPatientName);
-    }
-
-    public String getPatientnamesfile() {
-      return line.getOptionValue(optPatientNamesFile);
-    }
-
-    public String getOutputFile() {
-      return line.getOptionValue(optOutputFile);
-    }
-
     private boolean has(final String parameter) {
       return line.hasOption(parameter);
     }
@@ -158,41 +116,22 @@ public final class PACSTool {
 
     public void printHelp() {
       new HelpFormatter().
-            printHelp("PACSTool", options);
+            printHelp("FindScuCommandCreator", options);
     }
 
-    public boolean patientNamesFileSet() {
-      return line.hasOption(optPatientNamesFile);
+    private boolean isHelp() {
+      return line.hasOption(optHelp);
     }
 
-    public boolean patientNamesSet() {
+    private boolean hasPatientNames() {
       return line.hasOption(optPatientName);
     }
-  }
 
-  static final class PACSFacadeFactory {
-
-    static PACSFacade createFactory(
-          final String server,
-          final int port,
-          final String user) {
-      return new PACSFacade(server, port, user);
+    public String[] getPatientNames() {
+      return line.getOptionValues(optPatientName);
     }
   }
 
-  static final class RequestFactory {
-    final static CSVDocFactory factory = new CSVDocFactory();
-
-    static CSVDoc createRequest(final String filePath) {
-      return factory.create(filePath);
-    }
-
-    static CSVDoc createRequest(final String[] patientNames) {
-      return factory.create(patientNames);
-    }
-  }
-
-  //todo introduce optiongroups
   static final class OptionsFactory {
     static Options createOptions() {
       final Options options = new Options();
@@ -227,22 +166,6 @@ public final class PACSTool {
             .required(false)
             .longOpt(longOptPatientName)
             .desc("Patient name")
-            .build());
-
-      options.addOption(Option.builder(optPatientNamesFile)
-            .hasArg()
-            .argName("patientnamesfile")
-            .required(false)
-            .longOpt(longOptPatientNamesFile)
-            .desc("Patient names file")
-            .build());
-
-      options.addOption(Option.builder(optOutputFile)
-            .hasArg()
-            .argName("file")
-            .required(false)
-            .longOpt(longOptOutputFile)
-            .desc("Output file name")
             .build());
 
       options.addOption(Option.builder(optHelp)

@@ -7,16 +7,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.List;
 
 import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
 import static com.fourquant.riqae.pacs.PACSTool.optPatientName;
 import static com.fourquant.riqae.pacs.PACSTool.optPatientNamesFile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static java.nio.file.Files.readAllLines;
+import static org.junit.Assert.*;
 
 public class PACSToolTest {
-
 
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -40,6 +43,62 @@ public class PACSToolTest {
       PACSTool.main(args);
       assertTrue(outContent.toString().contains("help"));
     } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testWithPatientNames() {
+    final String[] args = new String[]{
+          "-patient-name", "Flavio Trolese",
+          "-patient-name", "Kevin Mader",
+          "-s", "localhost"};
+    try {
+      PACSTool.main(args);
+      assertTrue(outContent.toString().contains("Kevin Mader"));
+      assertTrue(outContent.toString().contains("Flavio Trolese"));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testWithPatientNameFile() {
+    final String[] args = new String[]{
+          "-patient-names-file", getClass().getResource("/names.csv").getFile()};
+    try {
+      PACSTool.main(args);
+      assertTrue(outContent.toString().contains("Ashlee Simpson"));
+      assertTrue(outContent.toString().contains("Kate Moss"));
+      assertTrue(outContent.toString().contains("Donatella Versace"));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testWithPatientNameFileAndOutputFile() {
+    final String[] args = new String[]{
+          "-patient-names-file", getClass().getResource("/names.csv").getFile(),
+          "-output-file", getClass().getResource("/out.csv").getFile()};
+    try {
+      PACSTool.main(args);
+      assertFalse(outContent.toString().contains("Ashlee Simpson"));
+      assertFalse(outContent.toString().contains("Kate Moss"));
+      assertFalse(outContent.toString().contains("Donatella Versace"));
+
+      final Path path =
+            FileSystems.getDefault().getPath(getClass().getResource("/out.csv").getPath());
+      final List<String> outputLines = readAllLines(path);
+      String output = "";
+      for (String line : outputLines) {
+        output += line;
+      }
+
+      assertTrue(output.contains("Ashlee Simpson"));
+      assertTrue(output.contains("Kate Moss"));
+      assertTrue(output.contains("Donatella Versace"));
+    } catch (ParseException | IOException e) {
       e.printStackTrace();
     }
   }
@@ -110,11 +169,11 @@ public class PACSToolTest {
     try {
       line = parser.parse(options, args);
 
-      final Message request =
+      final CSVDoc request =
             createRequest(line.getOptionValues(optPatientName));
 
       final PACSFacade pacsFacade = new PACSFacade("localhost", 2133, "admin");
-      final Message response = pacsFacade.process(request);
+      final CSVDoc response = pacsFacade.process(request);
 
       PACSTool.ResponseWriter.write(response);
 
@@ -132,8 +191,7 @@ public class PACSToolTest {
 
     final String[] args = new String[]{
           "-patient-names-file",
-          getClass().getResource("/testRequest.csv").getFile()};
-
+          getClass().getResource("/names.csv").getFile()};
 
 
     final CommandLine line;
@@ -141,10 +199,10 @@ public class PACSToolTest {
       line = parser.parse(options, args);
 
       String pnf = line.getOptionValue(optPatientNamesFile);
-      final Message request = createRequest(pnf);
+      final CSVDoc request = createRequest(pnf);
 
       final PACSFacade pacsFacade = new PACSFacade("localhost", 2133, "admin");
-      final Message response = pacsFacade.process(request);
+      final CSVDoc response = pacsFacade.process(request);
 
       PACSTool.ResponseWriter.write(response);
 

@@ -1,37 +1,52 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.Message.Row;
+import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class PACSFacadeTest {
   private final static String server = "localhost";
   private final static int port = 8924;
   private final static String user = "admin";
-  private final static String victimsName = "John Doe";
+  private final static String victimsName = "John^Doe";
 
   private final PACSFacade pacsFacade = new PACSFacade(server, port, user);
 
   @Test
   public void testResponseNotNull() {
-    final Message pacsMapObject = new Message();
-    final Message message = pacsFacade.process(pacsMapObject);
-    assertNotNull(message);
+    final CSVDoc pacsMapObject = new CSVDoc();
+    final CSVDoc CSVDoc = pacsFacade.process(pacsMapObject);
+    assertNotNull(CSVDoc);
+  }
+
+  @Test
+  public void testProcess() {
+    CSVDocFactory CSVDocFactory = new CSVDocFactory();
+    final List<String> patientNames = new ArrayList<>();
+    patientNames.add("Test^Process");
+    final CSVDoc CSVDoc = CSVDocFactory.create(patientNames);
+
+    final CSVDoc response = pacsFacade.process(CSVDoc);
+    final Set<String> returnedPatientNames = response.getPatientNames();
+    assertTrue(returnedPatientNames.contains("Test^Process"));
   }
 
   @Test
   public void testQuery() {
 
-    Message pacsRequest = new Message();
+    CSVDoc pacsRequest = new CSVDoc();
     final Row john = new Row();
     john.setPatientName(victimsName);
     pacsRequest.add(john);
 
-    Message message = pacsFacade.process(pacsRequest);
+    CSVDoc CSVDoc = pacsFacade.process(pacsRequest);
 
-    Row row = message.iterator().next();
+    Row row = CSVDoc.iterator().next();
     assertNotNull(row);
 
     assertEquals(victimsName, row.getPatientName());

@@ -1,8 +1,9 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.Message.Row;
+import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.dcm4che3.data.Attributes;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,19 +16,19 @@ import static com.fourquant.riqae.pacs.Protocol.patientNameField;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-public class MessageFactory {
+public class CSVDocFactory {
   private static final Logger log =
-        Logger.getLogger(MessageFactory.class.getName());
+        Logger.getLogger(CSVDocFactory.class.getName());
 
-  public final Message create(final String[] patientNames) {
+  public final CSVDoc create(final String[] patientNames) {
     return create(asList(patientNames));
   }
 
-  public final Message create(final List<String> patientNames) {
+  public final CSVDoc create(final List<String> patientNames) {
 
-    final Message pacsRequest = new Message();
+    final CSVDoc pacsRequest = new CSVDoc();
     for (String patientName : patientNames) {
-      Row row = new Row();
+      final Row row = new Row();
       row.setPatientName(patientName);
       pacsRequest.add(row);
     }
@@ -35,7 +36,7 @@ public class MessageFactory {
     return pacsRequest;
   }
 
-  public final Message create(final String filePath) {
+  public final CSVDoc create(final String filePath) {
     try {
       final Reader in = new FileReader(filePath);
 
@@ -49,5 +50,11 @@ public class MessageFactory {
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public final CSVDoc create(final Attributes attributes) {
+    final CSVDoc CSVDoc = new CSVDoc();
+    final Row row = new Row();
+    return null;
   }
 }

@@ -1,6 +1,6 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.Message.Row;
+import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -11,19 +11,19 @@ import java.io.PrintStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class MessageWriterTest {
+public class CSVDocWriterTest {
 
   @Test
   public void testWriteToBuffer() throws Exception {
-    final MessageWriter writer = new MessageWriter();
-    final Message message = new Message();
+    final CSVDocWriter writer = new CSVDocWriter();
+    final CSVDoc CSVDoc = new CSVDoc();
     final Row row = new Row();
     row.setPatientName("John Doe");
     final StringBuffer buffer = new StringBuffer();
 
-    message.add(row);
+    CSVDoc.add(row);
 
-    writer.write(message, buffer);
+    writer.write(CSVDoc, buffer);
 
     assertTrue(buffer.toString().contains("John Doe"));
   }
@@ -31,44 +31,43 @@ public class MessageWriterTest {
   @Test
   public void testWrite() throws Exception {
     final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    PrintStream out = System.out;
     System.setOut(new PrintStream(outContent));
 
-    final MessageWriter writer = new MessageWriter();
-    final Message message = new Message();
-    writer.write(message);
+    final CSVDocWriter writer = new CSVDocWriter();
+    final CSVDoc CSVDoc = new CSVDoc();
+    writer.write(CSVDoc);
 
+    final String header =
+          "Patient Name,Patient ID,Study Date,Study Description,Study Instance UID,Series Instance UID,Result";
     assertEquals(
-          "Patient Name,Patient ID,Exam ID,Series ID,Technique,Type",
+          header,
           outContent.toString().trim());
-
-    System.setOut(out);
   }
 
   @Test
   public void testWriteToFile() throws Exception {
-    final MessageFactory factory = new MessageFactory();
-    final Message message =
+    final CSVDocFactory factory = new CSVDocFactory();
+    final CSVDoc CSVDoc =
           factory.create(
                 getClass().
-                      getResource("/testRequest.csv").getFile());
+                      getResource("/names.csv").getFile());
 
     try (BufferedReader br =
                new BufferedReader(
                      new FileReader(
                            getClass().
-                                 getResource("/testRequest.csv").getFile()))) {
+                                 getResource("/names.csv").getFile()))) {
       String line;
       while ((line = br.readLine()) != null) {
         System.out.println(line);
       }
     }
 
-    final MessageWriter writer = new MessageWriter();
+    final CSVDocWriter writer = new CSVDocWriter();
 
     final String file = getClass().getResource("/dummy.csv").getFile();
     System.out.println("file = " + file);
-    writer.write(message, file);
+    writer.write(CSVDoc, file);
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
       String line;
@@ -79,10 +78,9 @@ public class MessageWriterTest {
 
   }
 
-
   @Test(expected = IllegalStateException.class)
   public void testWriteWithException() throws Exception {
-    final MessageWriter writer = new MessageWriter();
-    writer.write(new Message(), "/does/not/exist");
+    final CSVDocWriter writer = new CSVDocWriter();
+    writer.write(new CSVDoc(), "/does/not/exist");
   }
 }
