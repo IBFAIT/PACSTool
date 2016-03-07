@@ -28,7 +28,7 @@ public class DataRowFactory {
     final List<DataRow> pacsRequest = new ArrayList<>();
     for (String patientName : patientNames) {
       final DataRow dataRow = new DataRow();
-      //todo
+      //todo: implement other setters
       dataRow.setPatientName(patientName);
       pacsRequest.add(dataRow);
     }
