@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import static com.fourquant.riqae.pacs.FindScuCommandCreator.main;
+import static com.fourquant.riqae.pacs.TestConstants.*;
 import static org.junit.Assert.assertTrue;
 
 public class FindScuCommandCreatorTest {
@@ -31,13 +32,13 @@ public class FindScuCommandCreatorTest {
   @Test
   public void testFindScuCommandCreatorBasic() {
 
-    final String[] args = {"-pn", "Ashlee^Simpson",
-          "-pn", "Kate^Moss",
-          "-pn", "Donatella^Versace"};
+    final String[] args = {"-pn", nameAshlee,
+          "-pn", nameKate,
+          "-pn", nameDonatella};
     try {
       main(args);
       final String expected =
-            "findscu -c john@localhost:9090 -m PatientName=Ashlee^Simpson";
+            "findscu -c john@localhost:9090 -m PatientName=" + nameAshlee;
 
       assertTrue(outContent.toString().contains(expected));
     } catch (ParseException e) {
@@ -48,21 +49,20 @@ public class FindScuCommandCreatorTest {
   @Test
   public void testFindScuCommandCreatorParams() {
 
-    final String[] args = {"-pn", "Ashlee^Simpson",
-          "-pn", "Kate^Moss",
-          "-pn", "Donatella^Versace",
+    final String[] args = {"-pn", nameAshlee,
+          "-pn", nameKate,
+          "-pn", nameDonatella,
           "-s", "10.10.22.22",
           "-p", "666",
           "-u", "foo"};
     try {
       main(args);
       final String expected =
-            "findscu -c foo@10.10.22.22:666 -m PatientName=Ashlee^Simpson";
+            "findscu -c foo@10.10.22.22:666 -m PatientName=" + TestConstants.nameAshlee;
 
       assertTrue(outContent.toString().contains(expected));
     } catch (ParseException e) {
       e.printStackTrace();
     }
   }
-
 }

@@ -2,6 +2,11 @@ package com.fourquant.riqae.pacs;
 
 
 import org.apache.commons.cli.*;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.util.List;
 
 import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
 import static java.lang.Integer.parseInt;
@@ -32,7 +37,7 @@ public final class PACSTool {
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
-  public static void main(final String[] args) throws ParseException {
+  public static void main(final String[] args) throws ParseException, ParserConfigurationException, SAXException, IOException {
 
     final CommandLineProcessor clp = new CommandLineProcessor(args);
     if (!clp.callIsValid()) {
@@ -47,7 +52,7 @@ public final class PACSTool {
     final String patientNamesFile = clp.getPatientnamesfile();
     final String[] patientNames = clp.getPatientNames();
 
-    final CSVDoc pacsRequest;
+    final List<DataRow> pacsRequest;
 
     if (clp.patientNamesFileSet()) {
       pacsRequest = createRequest(patientNamesFile);
@@ -57,7 +62,7 @@ public final class PACSTool {
       throw new IllegalStateException();
     }
 
-    final CSVDoc pacsResponse = PACSFacadeFactory.createFactory(
+    final List<DataRow> pacsResponse = PACSFacadeFactory.createFactory(
           server, port, user).process(pacsRequest);
 
     if (clp.outputFileSet()) {
@@ -67,7 +72,7 @@ public final class PACSTool {
   }
 
   static final class ResponseWriter {
-    static void write(final CSVDoc pacsResponse,
+    static void write(final List<DataRow> pacsResponse,
                       final String outputFileName) {
 
       final CSVDocWriter writer = new CSVDocWriter();
@@ -75,7 +80,7 @@ public final class PACSTool {
     }
 
     static void write(
-          final CSVDoc pacsResponse) {
+          List<DataRow> pacsResponse) {
 
       final CSVDocWriter writer = new CSVDocWriter();
       writer.write(pacsResponse);
@@ -172,22 +177,22 @@ public final class PACSTool {
 
   static final class PACSFacadeFactory {
 
-    static PACSFacade createFactory(
+    static DefaultPACSFacade createFactory(
           final String server,
           final int port,
           final String user) {
-      return new PACSFacade(server, port, user);
+      return new DefaultPACSFacade(server, port, user);
     }
   }
 
   static final class RequestFactory {
     final static CSVDocFactory factory = new CSVDocFactory();
 
-    static CSVDoc createRequest(final String filePath) {
+    static List<DataRow> createRequest(final String filePath) {
       return factory.create(filePath);
     }
 
-    static CSVDoc createRequest(final String[] patientNames) {
+    static List<DataRow> createRequest(final String[] patientNames) {
       return factory.create(patientNames);
     }
   }

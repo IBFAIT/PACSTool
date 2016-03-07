@@ -3,23 +3,27 @@ package com.fourquant.riqae.pacs;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class XML2CSVTest {
+public class XML2CSVConverterTest {
 
   @Test
-  public final void testXml2CSVConversion() throws IOException {
-    final XML2CSV xml2CSV = new XML2CSV();
+  public final void testXml2CSVConversion()
+        throws IOException, ParserConfigurationException, SAXException {
+
+    final XML2CSVConverter xml2CSVConverter = new XML2CSVConverter();
     final CSVDocWriter csvDocWriter = new CSVDocWriter();
 
     final String xml = readContent(getPath("/XML2CSVTest.xml"));
 
-    final CSVDoc csvDoc = xml2CSV.convert(xml);
+    final List<DataRow> csvDoc = xml2CSVConverter.convert(xml);
 
     final StringBuffer buffer = new StringBuffer();
 

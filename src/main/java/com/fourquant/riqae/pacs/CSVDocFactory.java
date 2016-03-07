@@ -1,13 +1,12 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.dcm4che3.data.Attributes;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -20,23 +19,24 @@ public class CSVDocFactory {
   private static final Logger log =
         Logger.getLogger(CSVDocFactory.class.getName());
 
-  public final CSVDoc create(final String[] patientNames) {
+  public final List<DataRow> create(final String[] patientNames) {
     return create(asList(patientNames));
   }
 
-  public final CSVDoc create(final List<String> patientNames) {
+  public final List<DataRow> create(final List<String> patientNames) {
 
-    final CSVDoc pacsRequest = new CSVDoc();
+    final List<DataRow> pacsRequest = new ArrayList<>();
     for (String patientName : patientNames) {
-      final Row row = new Row();
-      row.setPatientName(patientName);
-      pacsRequest.add(row);
+      final DataRow dataRow = new DataRow();
+      //todo
+      dataRow.setPatientName(patientName);
+      pacsRequest.add(dataRow);
     }
 
     return pacsRequest;
   }
 
-  public final CSVDoc create(final String filePath) {
+  public final List<DataRow> create(final String filePath) {
     try {
       final Reader in = new FileReader(filePath);
 
@@ -52,9 +52,4 @@ public class CSVDocFactory {
     }
   }
 
-  public final CSVDoc create(final Attributes attributes) {
-    final CSVDoc CSVDoc = new CSVDoc();
-    final Row row = new Row();
-    return null;
-  }
 }

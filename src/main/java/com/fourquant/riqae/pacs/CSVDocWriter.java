@@ -1,6 +1,5 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.FileWriter;
@@ -17,39 +16,39 @@ public class CSVDocWriter {
         Logger.getLogger(CSVDocWriter.class.getName());
 
   public final void write(
-        final CSVDoc CSVDoc,
+        final List<DataRow> dataRows,
         final String filePath) {
 
     try {
       final FileWriter fw = new FileWriter(filePath);
-      write(CSVDoc, fw);
+      write(dataRows, fw);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
   }
 
-  public final void write(final CSVDoc CSVDoc) {
-    write(CSVDoc, System.out);
+  public final void write(final List<DataRow> dataRows) {
+    write(dataRows, System.out);
   }
 
   public final void write(
-        final CSVDoc CSVDoc,
+        final List<DataRow> dataRows,
         final Appendable appendable) {
 
     try {
 
       final CSVPrinter p = new CSVPrinter(appendable, format);
 
-      for (Row row : CSVDoc) {
+      for (DataRow dataRow : dataRows) {
         final List<Serializable> line = new ArrayList<>();
 
-        line.add(row.getPatientName());
-        line.add(row.getPatientId());
-        line.add(row.getStudyDate());
-        line.add(row.getStudyDescription());
-        line.add(row.getStudyInstanceUid());
-        line.add(row.getSeriesInstanceUID());
-        line.add(row.getResult());
+        line.add(dataRow.getPatientName());
+        line.add(dataRow.getPatientId());
+        line.add(dataRow.getStudyDate());
+        line.add(dataRow.getStudyDescription());
+        line.add(dataRow.getStudyInstanceUid());
+        line.add(dataRow.getSeriesInstanceUID());
+        line.add(dataRow.getResult());
 
         p.printRecord(line);
       }

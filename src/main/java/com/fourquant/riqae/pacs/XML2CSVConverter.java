@@ -12,21 +12,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
-public class XML2CSV {
+public class XML2CSVConverter {
 
-  public final CSVDoc convert(final String xml) {
+  public final List<DataRow> convert(final String xml) throws ParserConfigurationException, IOException, SAXException {
 
     final DocumentBuilderFactory factory =
           DocumentBuilderFactory.newInstance();
 
     final DocumentBuilder builder;
-    final CSVDoc csvDoc = new CSVDoc();
-    try {
 
+    final List<DataRow> dataRows = new ArrayList<>();
 
       builder = factory.newDocumentBuilder();
       InputStream stream = new ByteArrayInputStream(xml.getBytes(UTF_8));
@@ -45,7 +46,7 @@ public class XML2CSV {
                 ((Element) nativeDicomModels.item(i))
                       .getElementsByTagName("DicomAttribute");
 
-          final CSVDoc.Row row = new CSVDoc.Row();
+          final DataRow row = new DataRow();
 
           for (int j = 0; j < dicomAttributes.getLength(); j++) {
             Node item = dicomAttributes.item(j);
@@ -77,21 +78,10 @@ public class XML2CSV {
             }
 
           }
-          csvDoc.add(row);
+          dataRows.add(row);
         }
       }
 
-
-      return csvDoc;
-
-
-    } catch (ParserConfigurationException | SAXException | IOException e) {
-      e.printStackTrace();
-    }
-
-
-    return null;
-
-
+    return dataRows;
   }
 }

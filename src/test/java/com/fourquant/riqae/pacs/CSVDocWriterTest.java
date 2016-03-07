@@ -1,12 +1,13 @@
 package com.fourquant.riqae.pacs;
 
-import com.fourquant.riqae.pacs.CSVDoc.Row;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,12 +17,12 @@ public class CSVDocWriterTest {
   @Test
   public void testWriteToBuffer() throws Exception {
     final CSVDocWriter writer = new CSVDocWriter();
-    final CSVDoc CSVDoc = new CSVDoc();
-    final Row row = new Row();
-    row.setPatientName("John Doe");
+    final List<DataRow> CSVDoc = new ArrayList<>();
+    final DataRow dataRow = new DataRow();
+    dataRow.setPatientName("John Doe");
     final StringBuffer buffer = new StringBuffer();
 
-    CSVDoc.add(row);
+    CSVDoc.add(dataRow);
 
     writer.write(CSVDoc, buffer);
 
@@ -34,7 +35,7 @@ public class CSVDocWriterTest {
     System.setOut(new PrintStream(outContent));
 
     final CSVDocWriter writer = new CSVDocWriter();
-    final CSVDoc CSVDoc = new CSVDoc();
+    final List<DataRow> CSVDoc = new ArrayList<>();
     writer.write(CSVDoc);
 
     final String header =
@@ -47,7 +48,7 @@ public class CSVDocWriterTest {
   @Test
   public void testWriteToFile() throws Exception {
     final CSVDocFactory factory = new CSVDocFactory();
-    final CSVDoc CSVDoc =
+    final List<DataRow> CSVDoc =
           factory.create(
                 getClass().
                       getResource("/names.csv").getFile());
@@ -81,6 +82,6 @@ public class CSVDocWriterTest {
   @Test(expected = IllegalStateException.class)
   public void testWriteWithException() throws Exception {
     final CSVDocWriter writer = new CSVDocWriter();
-    writer.write(new CSVDoc(), "/does/not/exist");
+    writer.write(new ArrayList<>(), "/does/not/exist");
   }
 }
