@@ -17,14 +17,14 @@ public class CSVDocWriterTest {
   @Test
   public void testWriteToBuffer() throws Exception {
     final CSVDocWriter writer = new CSVDocWriter();
-    final List<DataRow> CSVDoc = new ArrayList<>();
+    final List<DataRow> dataRows = new ArrayList<>();
     final DataRow dataRow = new DataRow();
     dataRow.setPatientName("John Doe");
     final StringBuffer buffer = new StringBuffer();
 
-    CSVDoc.add(dataRow);
+    dataRows.add(dataRow);
 
-    writer.write(CSVDoc, buffer);
+    writer.write(dataRows, buffer);
 
     assertTrue(buffer.toString().contains("John Doe"));
   }
@@ -35,8 +35,8 @@ public class CSVDocWriterTest {
     System.setOut(new PrintStream(outContent));
 
     final CSVDocWriter writer = new CSVDocWriter();
-    final List<DataRow> CSVDoc = new ArrayList<>();
-    writer.write(CSVDoc);
+    final List<DataRow> dataRows = new ArrayList<>();
+    writer.write(dataRows);
 
     final String header =
           "Patient Name,Patient ID,Study Date,Study Description,Study Instance UID,Series Instance UID,Result";
@@ -47,8 +47,8 @@ public class CSVDocWriterTest {
 
   @Test
   public void testWriteToFile() throws Exception {
-    final CSVDocFactory factory = new CSVDocFactory();
-    final List<DataRow> CSVDoc =
+    final DataRowFactory factory = new DataRowFactory();
+    final List<DataRow> dataRows =
           factory.create(
                 getClass().
                       getResource("/names.csv").getFile());
@@ -68,7 +68,7 @@ public class CSVDocWriterTest {
 
     final String file = getClass().getResource("/dummy.csv").getFile();
     System.out.println("file = " + file);
-    writer.write(CSVDoc, file);
+    writer.write(dataRows, file);
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
       String line;

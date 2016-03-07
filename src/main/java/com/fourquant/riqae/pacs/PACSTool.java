@@ -186,7 +186,7 @@ public final class PACSTool {
   }
 
   static final class RequestFactory {
-    final static CSVDocFactory factory = new CSVDocFactory();
+    final static DataRowFactory factory = new DataRowFactory();
 
     static List<DataRow> createRequest(final String filePath) {
       return factory.create(filePath);

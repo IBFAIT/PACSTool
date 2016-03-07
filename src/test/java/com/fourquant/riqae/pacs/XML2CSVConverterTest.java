@@ -23,11 +23,11 @@ public class XML2CSVConverterTest {
 
     final String xml = readContent(getPath("/XML2CSVTest.xml"));
 
-    final List<DataRow> csvDoc = xml2CSVConverter.convert(xml);
+    final List<DataRow> dataRows = xml2CSVConverter.convert(xml);
 
     final StringBuffer buffer = new StringBuffer();
 
-    csvDocWriter.write(csvDoc, buffer);
+    csvDocWriter.write(dataRows, buffer);
 
     final String actual =
           buffer.toString()

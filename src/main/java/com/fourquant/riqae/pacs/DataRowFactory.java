@@ -15,9 +15,9 @@ import static com.fourquant.riqae.pacs.Protocol.patientNameField;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
-public class CSVDocFactory {
+public class DataRowFactory {
   private static final Logger log =
-        Logger.getLogger(CSVDocFactory.class.getName());
+        Logger.getLogger(DataRowFactory.class.getName());
 
   public final List<DataRow> create(final String[] patientNames) {
     return create(asList(patientNames));

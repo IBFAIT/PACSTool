@@ -83,18 +83,18 @@ public class DefaultPACSFacadeTest {
   @Test
   public void testResponseNotNull() throws ParserConfigurationException, SAXException, IOException {
     final List<DataRow> pacsMapObject = new ArrayList<>();
-    final List<DataRow> CSVDoc = pacsFacade.process(pacsMapObject);
-    assertNotNull(CSVDoc);
+    final List<DataRow> dataRows = pacsFacade.process(pacsMapObject);
+    assertNotNull(dataRows);
   }
 
   @Test
   public void testProcess() throws ParserConfigurationException, SAXException, IOException {
-    CSVDocFactory CSVDocFactory = new CSVDocFactory();
+    DataRowFactory DataRowFactory = new DataRowFactory();
     final List<String> patientNames = new ArrayList<>();
     patientNames.add(nameAshlee);
-    final List<DataRow> CSVDoc = CSVDocFactory.create(patientNames);
+    final List<DataRow> dataRows = DataRowFactory.create(patientNames);
 
-    final List<DataRow> response = pacsFacade.process(CSVDoc);
+    final List<DataRow> response = pacsFacade.process(dataRows);
     final Set<String> returnedPatientNames = new HashSet<>();
     for (final DataRow dataRow : response) {
       final String patientName = dataRow.getPatientName();
@@ -111,9 +111,9 @@ public class DefaultPACSFacadeTest {
     ashley.setPatientName(nameAshlee);
     pacsRequest.add(ashley);
 
-    final List<DataRow> csvDoc = pacsFacade.process(pacsRequest);
+    final List<DataRow> dataRows = pacsFacade.process(pacsRequest);
 
-    final DataRow dataRow = csvDoc.iterator().next();
+    final DataRow dataRow = dataRows.iterator().next();
     assertNotNull(dataRow);
 
     assertEquals(nameAshlee, dataRow.getPatientName());

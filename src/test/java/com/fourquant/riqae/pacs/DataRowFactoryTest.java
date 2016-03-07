@@ -10,32 +10,32 @@ import java.util.Set;
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static org.junit.Assert.*;
 
-public class CSVDocFactoryTest {
+public class DataRowFactoryTest {
 
   @Test
   public void testCreateFromCommandLineArgs() throws Exception {
-    final CSVDocFactory factory = new CSVDocFactory();
+    final DataRowFactory factory = new DataRowFactory();
     final ArrayList<String> patientNames = new ArrayList<String>() {{
       add(TestConstants.nameDonatella);
       add("John^Doe");
       add("Lucky^Luke");
     }};
 
-    final List<DataRow> CSVDoc = factory.create(patientNames);
-    final DataRow dataRow = CSVDoc.iterator().next();
+    final List<DataRow> dataRows = factory.create(patientNames);
+    final DataRow dataRow = dataRows.iterator().next();
     assertEquals(TestConstants.nameDonatella, dataRow.getPatientName());
   }
 
   @Test
   public void testCreateFromCSVFile() throws Exception {
-    final CSVDocFactory factory = new CSVDocFactory();
-    final List<DataRow> CSVDoc =
+    final DataRowFactory factory = new DataRowFactory();
+    final List<DataRow> dataRows =
           factory.create(
                 getClass().getResource("/names.csv").getFile());
 
     final Set<String> patientNames = new HashSet<>();
 
-    for (DataRow dataRow : CSVDoc) {
+    for (DataRow dataRow : dataRows) {
       patientNames.add(dataRow.getPatientName());
     }
 
