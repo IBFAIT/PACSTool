@@ -1,5 +1,6 @@
 package com.fourquant.riqae.pacs;
 
+import com.fourquant.riqae.pacs.PACSTool.ResponseWriter;
 import org.apache.commons.cli.*;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +16,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
-import static com.fourquant.riqae.pacs.PACSTool.optPatientName;
 import static com.fourquant.riqae.pacs.PACSTool.optPatientNamesFile;
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static java.nio.file.Files.readAllLines;
@@ -86,7 +86,7 @@ public class PACSToolTest {
     try {
       PACSTool.main(args);
       assertFalse(outContent.toString().contains(TestConstants.nameAshlee));
-      assertFalse(outContent.toString().contains(TestConstants.nameKate));
+      assertFalse(outContent.toString().contains(nameKate));
       assertFalse(outContent.toString().contains(TestConstants.nameDonatella));
 
       final Path path =
@@ -101,30 +101,6 @@ public class PACSToolTest {
       assertTrue(output.contains(nameKate));
       assertTrue(output.contains(nameDonatella));
     } catch (ParseException | IOException | ParserConfigurationException | SAXException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  public void testResponseWriter() {
-    final CommandLineParser parser = new DefaultParser();
-    final Options options = PACSTool.OptionsFactory.createOptions();
-    String[] args = new String[]{"-" + optPatientName, "John Doe"};
-    final CommandLine line;
-    try {
-      line = parser.parse(options, args);
-
-      final List<DataRow> request =
-            createRequest(line.getOptionValues(optPatientName));
-
-      final DefaultPACSFacade defaultPacsFacade = new DefaultPACSFacade("localhost", 2133, "admin");
-      final List<DataRow> response = defaultPacsFacade.process(request);
-
-      PACSTool.ResponseWriter.write(response);
-
-      final String out = outContent.toString();
-      assertTrue(out.contains("John Doe"));
-    } catch (ParseException | ParserConfigurationException | IOException | SAXException e) {
       e.printStackTrace();
     }
   }
@@ -145,14 +121,15 @@ public class PACSToolTest {
       String pnf = line.getOptionValue(optPatientNamesFile);
       final List<DataRow> request = createRequest(pnf);
 
-      final DefaultPACSFacade defaultPacsFacade = new DefaultPACSFacade("localhost", 2133, "admin");
+      final DefaultPACSFacade defaultPacsFacade =
+            new DefaultPACSFacade("localhost", 2133, "admin");
       final List<DataRow> response = defaultPacsFacade.process(request);
 
-      PACSTool.ResponseWriter.write(response);
+      ResponseWriter.write(response);
 
       final String out = outContent.toString();
       assertTrue(out.contains("Ashlee Simpson"));
-    } catch (ParseException | ParserConfigurationException | IOException | SAXException e) {
+    } catch (ParseException | IOException e) {
       e.printStackTrace();
     }
   }

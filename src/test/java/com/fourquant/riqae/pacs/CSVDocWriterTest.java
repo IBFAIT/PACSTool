@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fourquant.riqae.pacs.TestConstants.nameAshlee;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,14 +20,14 @@ public class CSVDocWriterTest {
     final CSVDocWriter writer = new CSVDocWriter();
     final List<DataRow> dataRows = new ArrayList<>();
     final DataRow dataRow = new DataRow();
-    dataRow.setPatientName("John Doe");
+    dataRow.setPatientName(nameAshlee);
     final StringBuffer buffer = new StringBuffer();
 
     dataRows.add(dataRow);
 
     writer.write(dataRows, buffer);
 
-    assertTrue(buffer.toString().contains("John Doe"));
+    assertTrue(buffer.toString().contains(nameAshlee));
   }
 
   @Test

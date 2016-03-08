@@ -20,7 +20,8 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 
 public class XML2CSVConverter {
 
-  public final List<DataRow> convert(final String xml) throws ParserConfigurationException, IOException, SAXException {
+  public final List<DataRow> convert(final String xml)
+        throws IOException {
 
     final DocumentBuilderFactory factory =
           DocumentBuilderFactory.newInstance();
@@ -29,12 +30,14 @@ public class XML2CSVConverter {
 
     final List<DataRow> dataRows = new ArrayList<>();
 
+    try {
       builder = factory.newDocumentBuilder();
+
       InputStream stream = new ByteArrayInputStream(xml.getBytes(UTF_8));
 
       final Document doc = builder.parse(stream);
-
       final Element root = doc.getDocumentElement();
+
       root.normalize();
       final NodeList nativeDicomModels =
             doc.getElementsByTagName("NativeDicomModel");
@@ -75,13 +78,23 @@ public class XML2CSVConverter {
               case "StudyInstanceUID":
                 row.setStudyInstanceUid(value);
                 break;
-            }
 
+              case "SeriesInstanceUID":
+                row.setSeriesInstanceUID(value);
+                break;
+
+              case "Result":
+                row.setResult(value);
+                break;
+            }
           }
           dataRows.add(row);
         }
       }
 
-    return dataRows;
+      return dataRows;
+    } catch (ParserConfigurationException | SAXException e) {
+      throw new IOException();
+    }
   }
 }

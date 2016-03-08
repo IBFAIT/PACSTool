@@ -41,7 +41,6 @@ public class DefaultPACSFacadeTest {
     assertEquals(userExpected, userActual);
   }
 
-
   @Test
   public void testCreatePACSFacadeFactoryWithCMD() {
     final String serverExpected = "103.231.642.242";
@@ -79,7 +78,6 @@ public class DefaultPACSFacadeTest {
     }
   }
 
-
   @Test
   public void testResponseNotNull() throws ParserConfigurationException, SAXException, IOException {
     final List<DataRow> pacsMapObject = new ArrayList<>();
@@ -106,7 +104,7 @@ public class DefaultPACSFacadeTest {
   @Test
   public void testQuery() throws ParserConfigurationException, SAXException, IOException {
 
-    List<DataRow> pacsRequest = new ArrayList<>();
+    final List<DataRow> pacsRequest = new ArrayList<>();
     final DataRow ashley = new DataRow();
     ashley.setPatientName(nameAshlee);
     pacsRequest.add(ashley);

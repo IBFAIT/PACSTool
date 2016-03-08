@@ -72,18 +72,17 @@ public final class PACSTool {
   }
 
   static final class ResponseWriter {
-    static void write(final List<DataRow> pacsResponse,
+    static void write(final List<DataRow> dataRows,
                       final String outputFileName) {
 
       final CSVDocWriter writer = new CSVDocWriter();
-      writer.write(pacsResponse, outputFileName);
+      writer.write(dataRows, outputFileName);
     }
 
-    static void write(
-          List<DataRow> pacsResponse) {
+    static void write(final List<DataRow> dataRows) throws IOException {
 
       final CSVDocWriter writer = new CSVDocWriter();
-      writer.write(pacsResponse);
+      writer.write(dataRows);
     }
   }
 

@@ -2,10 +2,7 @@ package com.fourquant.riqae.pacs;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static org.junit.Assert.*;
@@ -16,14 +13,17 @@ public class DataRowFactoryTest {
   public void testCreateFromCommandLineArgs() throws Exception {
     final DataRowFactory factory = new DataRowFactory();
     final ArrayList<String> patientNames = new ArrayList<String>() {{
-      add(TestConstants.nameDonatella);
-      add("John^Doe");
+      add(nameDonatella);
+      add(nameKate);
       add("Lucky^Luke");
     }};
 
     final List<DataRow> dataRows = factory.create(patientNames);
-    final DataRow dataRow = dataRows.iterator().next();
-    assertEquals(TestConstants.nameDonatella, dataRow.getPatientName());
+    final Iterator<DataRow> iterator = dataRows.iterator();
+    final DataRow dataRow = iterator.next();
+
+    assertEquals(nameDonatella, dataRow.getPatientName());
+    assertEquals(nameKate, iterator.next().getPatientName());
   }
 
   @Test

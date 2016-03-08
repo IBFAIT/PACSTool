@@ -8,21 +8,21 @@ import static org.apache.commons.csv.CSVFormat.DEFAULT;
 public interface Protocol {
   String patientNameField = "Patient Name";
   String patientIdField = "Patient ID";
-  String studyDate = "Study Date";
-  String studyDescription = "Study Description";
+  String studyDateField = "Study Date";
+  String studyDescriptionField = "Study Description";
   String studyInstanceUidField = "Study Instance UID";
   String seriesInstanceUIDField = "Series Instance UID";
-  String result = "Result";
+  String resultField = "Result";
 
   CSVFormat format = DEFAULT.
         withDelimiter(',').
         withHeader(
               patientNameField,
               patientIdField,
-              studyDate,
-              studyDescription,
+              studyDateField,
+              studyDescriptionField,
               studyInstanceUidField,
               seriesInstanceUIDField,
-              result).
+              resultField).
         withSkipHeaderRecord();
 }

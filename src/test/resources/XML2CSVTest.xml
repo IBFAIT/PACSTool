@@ -15,4 +15,7 @@
   <DicomAttribute keyword="StudyInstanceUID" tag="0020000D" vr="UI">
     <Value number="1">433524313593.2234231</Value>
   </DicomAttribute>
+  <DicomAttribute keyword="SeriesInstanceUID" tag="0020000E" vr="UI">
+    <Value number="1">1.2.40.0.13.1.1.99.13.1</Value>
+  </DicomAttribute>
 </NativeDicomModel>

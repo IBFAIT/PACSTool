@@ -1,8 +1,5 @@
 package com.fourquant.riqae.pacs;
 
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,11 +39,11 @@ public final class DefaultPACSFacade implements PACSFacade {
   }
 
   public List<DataRow> process(final List<DataRow> input) throws
-        IOException, SAXException, ParserConfigurationException {
+        IOException {
 
     final List<DataRow> output = new ArrayList<>();
     for (final DataRow dataRow : input) {
-      //create findscu call
+
       final String patientName = dataRow.getPatientName();
       final FindScuCommandCreator findScuCommandCreator =
             new FindScuCommandCreator();
@@ -54,6 +51,7 @@ public final class DefaultPACSFacade implements PACSFacade {
       final String findSCUCall =
             findScuCommandCreator.createFindScuStatement(
                   patientName, user, server, Integer.toString(port));
+
       //replace by real implementation
       final ThirdPartyToolExecutor findScuExecutor =
 

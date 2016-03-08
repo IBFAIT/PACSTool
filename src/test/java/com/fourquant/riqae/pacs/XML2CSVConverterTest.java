@@ -7,10 +7,11 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+
+import static java.nio.file.FileSystems.getDefault;
 
 public class XML2CSVConverterTest {
 
@@ -42,7 +43,7 @@ public class XML2CSVConverterTest {
 
   private Path getPath(final String fileName) {
 
-    return FileSystems.getDefault().getPath(getClass().
+    return getDefault().getPath(getClass().
           getResource(fileName).getPath());
   }
 
