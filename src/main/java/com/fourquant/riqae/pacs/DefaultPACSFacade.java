@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static com.fourquant.riqae.pacs.PACSFacade.Operation.resolvePatientIds;
+
 public final class DefaultPACSFacade implements PACSFacade {
 
   private static final Logger log =
@@ -15,6 +17,8 @@ public final class DefaultPACSFacade implements PACSFacade {
   private final int port;
 
   private final String user;
+
+  private ThirdPartyToolExecutor thirdPartyToolExecutor;
 
   public DefaultPACSFacade(
         final String server,
@@ -38,13 +42,23 @@ public final class DefaultPACSFacade implements PACSFacade {
     return user;
   }
 
-  public List<DataRow> process(final List<DataRow> input) throws
-        IOException {
+  public List<DataRow> process(
+        final List<DataRow> input) throws IOException {
+    return process(input, resolvePatientIds);
+  }
+
+  public List<DataRow> process(
+        final List<DataRow> input,
+        Operation operation) throws IOException {
+
+//todo use operation
 
     final List<DataRow> output = new ArrayList<>();
-    for (final DataRow dataRow : input) {
+    for (final DataRow inputRow : input) {
 
-      final String patientName = dataRow.getPatientName();
+
+      final String patientName = inputRow.getPatientName();
+
       final FindScuCommandCreator findScuCommandCreator =
             new FindScuCommandCreator();
 
@@ -52,34 +66,32 @@ public final class DefaultPACSFacade implements PACSFacade {
             findScuCommandCreator.createFindScuStatement(
                   patientName, user, server, Integer.toString(port));
 
-      //replace by real implementation
-      final ThirdPartyToolExecutor findScuExecutor =
+      final String[] xmlResult =
+            thirdPartyToolExecutor.execute(findSCUCall);
 
-            new ThirdPartyToolExecutor() {
-              private String patientName;
-
-              @Override
-              public String execute(String command) {
-
-                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                      "<NativeDicomModel xml:space=\"preserve\">\n" +
-                      "<DicomAttribute keyword=\"PatientID\" tag=\"00100020\" vr=\"LO\">" +
-                      "<Value number=\"1\">USB0003138461</Value>" +
-                      "</DicomAttribute>\n" +
-                      "<DicomAttribute keyword=\"PatientName\" tag=\"00100010\" vr=\"DA\">" +
-                      " <Value number=\"1\">" + dataRow.getPatientName() + "</Value>" +
-                      "</DicomAttribute>\n" +
-                      "</NativeDicomModel>";
-              }
-            };
-
-      final String xmlResult = findScuExecutor.execute(findSCUCall);
       final XML2CSVConverter xml2CSVConverter = new XML2CSVConverter();
-      final List<DataRow> rows = xml2CSVConverter.convert(xmlResult);
 
-      for (final DataRow row : rows) {
-        output.add(row);
+      for (final String anXmlResult : xmlResult) {
+        final List<DataRow> dataRows = xml2CSVConverter.convert(anXmlResult);
+        for (final DataRow row : dataRows) {
+          output.add(row);
+        }
       }
+
+
+      /*
+
+       todo: add actual logic processing logic
+
+       cases are:
+       * resolve patientIds from names
+       * resolve resolve study descriptions...
+       * resolve bla
+       * resolve bli
+       * do calculate results
+       *
+       */
+
     }
 
     final CSVDocWriter csvDocWriter = new CSVDocWriter();
@@ -87,5 +99,10 @@ public final class DefaultPACSFacade implements PACSFacade {
     csvDocWriter.write(output, buffer);
 
     return output;
+  }
+
+  public final void setThirdPartyToolExecutor(
+        final ThirdPartyToolExecutor thirdPartyToolExecutor) {
+    this.thirdPartyToolExecutor = thirdPartyToolExecutor;
   }
 }

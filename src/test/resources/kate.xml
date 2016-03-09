@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NativeDicomModel xml:space="preserve">
+  <DicomAttribute keyword="PatientID" tag="00100020" vr="LO">
+    <Value number="1">USB000123471</Value>
+  </DicomAttribute>
+  <DicomAttribute keyword="PatientName" tag="00100010" vr="DA">
+    <Value number="1">Kate Moss</Value>
+  </DicomAttribute>
+  <DicomAttribute keyword="StudyDate" tag="00080020" vr="DA">
+    <Value number="1">20130113</Value>
+  </DicomAttribute>
+    <DicomAttribute keyword="StudyDescription" tag="00081030" vr="LO">
+    <Value number="1">MRI Full Body</Value>
+  </DicomAttribute>
+  <DicomAttribute keyword="StudyInstanceUID" tag="0020000D" vr="UI">
+    <Value number="1">433524313593.2234231</Value>
+  </DicomAttribute>
+  <DicomAttribute keyword="SeriesInstanceUID" tag="0020000E" vr="UI">
+    <Value number="1">1.2.40.0.13.1.1.99.13.1</Value>
+  </DicomAttribute>
+</NativeDicomModel>

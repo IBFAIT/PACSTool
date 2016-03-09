@@ -50,6 +50,21 @@ public class PACSToolTest {
   }
 
   @Test
+  public void testFoo() {
+    final String[] args = new String[]{
+          "-patient-name", "Flavio Trolese",
+          "-patient-name", "Kevin Mader",
+          "-s", "localhost", "foo"};
+
+    try {
+      PACSTool.main(args);
+
+    } catch (ParseException | SAXException | IOException | ParserConfigurationException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
   public void testWithPatientNames() {
     final String[] args = new String[]{
           "-patient-name", nameKate,
@@ -85,9 +100,9 @@ public class PACSToolTest {
           "-output-file", getClass().getResource("/out.csv").getFile()};
     try {
       PACSTool.main(args);
-      assertFalse(outContent.toString().contains(TestConstants.nameAshlee));
+      assertFalse(outContent.toString().contains(nameAshlee));
       assertFalse(outContent.toString().contains(nameKate));
-      assertFalse(outContent.toString().contains(TestConstants.nameDonatella));
+      assertFalse(outContent.toString().contains(nameDonatella));
 
       final Path path =
             FileSystems.getDefault().getPath(getClass().getResource("/out.csv").getPath());
@@ -121,9 +136,14 @@ public class PACSToolTest {
       String pnf = line.getOptionValue(optPatientNamesFile);
       final List<DataRow> request = createRequest(pnf);
 
-      final DefaultPACSFacade defaultPacsFacade =
+      final DefaultPACSFacade pacsFacade =
             new DefaultPACSFacade("localhost", 2133, "admin");
-      final List<DataRow> response = defaultPacsFacade.process(request);
+
+      pacsFacade.setThirdPartyToolExecutor(
+            new DummyThirdPartyToolExecutor(
+                  new String[]{"ashlee.xml"}));
+
+      final List<DataRow> response = pacsFacade.process(request);
 
       ResponseWriter.write(response);
 

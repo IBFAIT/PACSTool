@@ -47,11 +47,6 @@ public class ResponseWriterTest {
   }
 
   @Test
-  public void testWrite1() throws Exception {
-
-  }
-
-  @Test
   public void testResponseWriter() {
     final CommandLineParser parser = new DefaultParser();
     final Options options = PACSTool.OptionsFactory.createOptions();
@@ -63,8 +58,14 @@ public class ResponseWriterTest {
       final List<DataRow> request =
             createRequest(line.getOptionValues(optPatientName));
 
-      final DefaultPACSFacade defaultPacsFacade = new DefaultPACSFacade("localhost", 2133, "admin");
-      final List<DataRow> response = defaultPacsFacade.process(request);
+      final DefaultPACSFacade pacsFacade =
+            new DefaultPACSFacade("localhost", 2133, "admin");
+
+      pacsFacade.setThirdPartyToolExecutor(
+            new DummyThirdPartyToolExecutor(
+                  new String[]{"kate.xml"}));
+
+      final List<DataRow> response = pacsFacade.process(request);
 
       PACSTool.ResponseWriter.write(response);
 

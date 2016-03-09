@@ -37,7 +37,8 @@ public final class PACSTool {
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
-  public static void main(final String[] args) throws ParseException, ParserConfigurationException, SAXException, IOException {
+  public static void main(final String[] args)
+        throws ParseException, ParserConfigurationException, SAXException, IOException {
 
     final CommandLineProcessor clp = new CommandLineProcessor(args);
     if (!clp.callIsValid()) {
@@ -62,8 +63,13 @@ public final class PACSTool {
       throw new IllegalStateException();
     }
 
-    final List<DataRow> pacsResponse = PACSFacadeFactory.createFactory(
-          server, port, user).process(pacsRequest);
+    final DefaultPACSFacade pacsFacade = new DefaultPACSFacade(server, port, user);
+
+    pacsFacade.setThirdPartyToolExecutor(
+          new DummyThirdPartyToolExecutor(
+                new String[]{"donatella.xml", "kate.xml", "ashlee.xml"}));
+
+    final List<DataRow> pacsResponse = pacsFacade.process(pacsRequest);
 
     if (clp.outputFileSet()) {
       ResponseWriter.write(pacsResponse, outputFile);
@@ -171,16 +177,6 @@ public final class PACSTool {
 
     public boolean patientNamesSet() {
       return line.hasOption(optPatientName);
-    }
-  }
-
-  static final class PACSFacadeFactory {
-
-    static DefaultPACSFacade createFactory(
-          final String server,
-          final int port,
-          final String user) {
-      return new DefaultPACSFacade(server, port, user);
     }
   }
 
