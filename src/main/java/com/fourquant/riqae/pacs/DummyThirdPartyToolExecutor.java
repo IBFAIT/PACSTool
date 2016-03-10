@@ -1,6 +1,7 @@
 package com.fourquant.riqae.pacs;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -29,8 +30,10 @@ public class DummyThirdPartyToolExecutor implements ThirdPartyToolExecutor {
 
   private Path getPath(final String fileName) {
 
-    return getDefault().getPath(getClass().
-          getResource(fileName).getPath());
+    final URL resource = getClass().getResource(fileName);
+    final String path = resource.getPath();
+
+    return getDefault().getPath(path);
   }
 
   private String readContent(final Path path) throws IOException {
