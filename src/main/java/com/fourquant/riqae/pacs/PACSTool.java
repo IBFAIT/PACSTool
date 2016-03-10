@@ -12,6 +12,7 @@ import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
 import static java.lang.Integer.parseInt;
 
 public final class PACSTool {
+
   public static final int PACS_SERVER_PORT_DEFAULT = 9090;
   public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
   public static final String PACS_SERVER_USER_DEFAULT = "john";
