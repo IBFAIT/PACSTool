@@ -1,0 +1,4 @@
+Patient Name,Patient ID,Study Instance UID,Series Instance UID,Technique,Type
+Ashlee Simpson,3887,2671,1917,MRI,Thorax
+Kate Moss,1615,1172,35,MRI,Breast
+Donatella Versace,2526,711,1204,CT,Breast
