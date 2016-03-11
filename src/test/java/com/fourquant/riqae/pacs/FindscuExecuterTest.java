@@ -23,12 +23,12 @@ public class FindscuExecuterTest {
     static final String TEST_TEMP_DIR = "/tmp/";
 
     static final String[] FINDSCU_TESTS_IN =
-            {"findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101",
-                    "findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /Users/tomjre/Desktop/USB_Projects/out"
+            {"findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101",
+                    "findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /Users/tomjre/Desktop/USB_Projects/out"
             };
     static final String[] FINDSCU_TESTS_EXPECTED =
-            {"findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /tmp/ --xml ",
-                    "findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101  --out-dir /tmp/ --xml --out-dir /Users/tomjre/Desktop/USB_Projects/out"
+            {"findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /tmp/ --xml ",
+                    "findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101  --out-dir /tmp/ --xml --out-dir /Users/tomjre/Desktop/USB_Projects/out"
             };
 
     @Before
@@ -41,6 +41,8 @@ public class FindscuExecuterTest {
         System.setOut(null);
         System.setErr(null);
     }
+
+
 
     @Test
     public void testTempFileCreation01() {
@@ -93,8 +95,26 @@ public class FindscuExecuterTest {
         try {
             FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
             generateMocResults(findscuExe.getTempPath());
-            System.out.println();
             findscuExe.cleanup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void testExecute() {
+        try {
+            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
+            generateMocResults(findscuExe.getTempPath());
+            String[] outArray= findscuExe.execute(FINDSCU_TESTS_IN[0]);
+            int i=0;
+            for (String out : outArray) {
+               System.out.println(MOCRESULTS[i++]);
+               System.out.println(out);
+               System.out.println("==========");
+                //assertEquals(MOCRESULTS[i++],out);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,5 +143,9 @@ public class FindscuExecuterTest {
      }
 
    }
+
+
+
+
 
 }
