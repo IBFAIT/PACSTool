@@ -4,6 +4,9 @@ import java.io.*;
 
 /**
  * Execute a Findscu command and process results.
+ * This class is specific to the dcm4che findscu function
+ * accounting for the specific io of this command.
+ *
  * Findscu command will create an XML output file which
  * is read and sent as a String to caller.
  * Created by tomjre on 3/10/16.
@@ -21,8 +24,8 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
    protected static String DO_NOT_EXECUTE= "--do-not-execute" ;  // used for texting only
 
 
-    private String _tempPath;
 
+    private String _tempPath;
     /**
      *   Constructor
       */
@@ -40,6 +43,16 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
       }
 
    }
+
+    public FindscuExecuter(String aetIPPort, String level, String requestedFields, String knownFields) {
+
+        StringBuffer buffy= new StringBuffer(FINDSCU);
+       buffy.append(SPACE+"-c "+aetIPPort);
+       buffy.append(SPACE+requestedFields);
+       buffy.append(SPACE+knownFields);
+    }
+
+
 
     /**
      *  Constructor with temporary path setting.  Useful primarily for testing class.
