@@ -45,6 +45,7 @@ public class CSVDocWriter {
       line.add(dataRow.getPatientId());
       line.add(dataRow.getStudyDate());
       line.add(dataRow.getStudyDescription());
+      line.add(dataRow.getSeriesDescription());
       line.add(dataRow.getStudyInstanceUid());
       line.add(dataRow.getSeriesInstanceUID());
       line.add(dataRow.getResult());

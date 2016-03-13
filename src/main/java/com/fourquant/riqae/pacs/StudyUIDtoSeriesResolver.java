@@ -46,4 +46,21 @@ public class StudyUIDtoSeriesResolver {
         return FINDSCU+REQUESTS+STUDYUID_TAG+studyInstanceUID
                 +PACS_CONNECTION_FLAG+_PACSconnectionParameters;
     }
+
+
+    /** Perform test from command line */
+    public static void main(String[] args) {
+        try {
+            String aet= args[0];
+            String studyInstanceUID= args[1];
+            StudyUIDtoSeriesResolver psresolver= new StudyUIDtoSeriesResolver(aet);
+            String[] outArray= psresolver.resolveXML(studyInstanceUID);
+            int i=0;
+            for (String out : outArray) {
+                System.out.println(out);
+            }
+        } catch (Exception e) {
+            System.out.println("usage: StudyUIDtoSeriesResolverTest AET@IP:port StudyInstanceUID");
+        }
+    }
 }

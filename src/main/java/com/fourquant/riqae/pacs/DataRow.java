@@ -5,9 +5,14 @@ public class DataRow {
   private String patientId;
   private String studyDate;
   private String studyDescription;
+  private String seriesDescription;
   private String studyInstanceUid;
   private String seriesInstanceUID;
   private String result;
+
+  public DataRow() {
+    patientName= patientId= studyDate= studyDescription= seriesDescription= studyInstanceUid= seriesInstanceUID= result= "NA";
+  }
 
   public String getPatientName() {
     return patientName;
@@ -65,6 +70,14 @@ public class DataRow {
     this.studyDescription = studyDescription;
   }
 
+  public String getSeriesDescription() {
+    return seriesDescription;
+  }
+
+  public void setSeriesDescription(String seriesDescription) {
+    this.seriesDescription = seriesDescription;
+  }
+
   @Override
   public String toString() {
     return "DataRow{" +
@@ -72,6 +85,7 @@ public class DataRow {
           ", patientId='" + patientId + '\'' +
           ", studyDate='" + studyDate + '\'' +
           ", studyDescription='" + studyDescription + '\'' +
+          ", seriesDescription='" + seriesDescription + '\'' +
           ", studyInstanceUid='" + studyInstanceUid + '\'' +
           ", seriesInstanceUID='" + seriesInstanceUID + '\'' +
           ", result='" + result + '\'' +

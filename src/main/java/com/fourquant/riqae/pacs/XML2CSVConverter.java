@@ -75,6 +75,10 @@ public class XML2CSVConverter {
                 row.setStudyDescription(value);
                 break;
 
+              case "SeriesDescription":
+                row.setSeriesDescription(value);
+                break;
+
               case "StudyInstanceUID":
                 row.setStudyInstanceUid(value);
                 break;

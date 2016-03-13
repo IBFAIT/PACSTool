@@ -4,7 +4,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,6 +57,27 @@ public class PatientIDtoStudiesResolverTest {
 
     }
 
+    @Test
+    public void testMOCExecuteWithXMLConverstionToCSV() {
+        try {
+            final XML2CSVConverter xml2CSVConverter = new XML2CSVConverter();
+            final CSVDocWriter csvDocWriter = new CSVDocWriter();
+
+            final String xml = MOCRESULTS[0];
+
+            final List<DataRow> dataRows = xml2CSVConverter.convert(xml);
+
+            final StringBuffer buffy = new StringBuffer();
+
+            csvDocWriter.write(dataRows, buffy);
+            System.out.println(buffy.toString());
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+
+    }
+
     private static final String[] MOCRESULTS = {
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><NativeDicomModel xml:space=\"preserve\"><DicomAttribute keyword=\"SpecificCharacterSet\" tag=\"00080005\" vr=\"CS\"><Value number=\"1\">ISO_IR 100</Value></DicomAttribute><DicomAttribute keyword=\"StudyDate\" tag=\"00080020\" vr=\"DA\"><Value number=\"1\">20141125</Value></DicomAttribute><DicomAttribute keyword=\"QueryRetrieveLevel\" tag=\"00080052\" vr=\"CS\"><Value number=\"1\">STUDY</Value></DicomAttribute><DicomAttribute keyword=\"RetrieveAETitle\" tag=\"00080054\" vr=\"AE\"><Value number=\"1\">OSIRIX</Value></DicomAttribute><DicomAttribute keyword=\"StudyDescription\" tag=\"00081030\" vr=\"LO\"><Value number=\"1\">Rm Colonna Cervicale</Value></DicomAttribute><DicomAttribute keyword=\"PatientName\" tag=\"00100010\" vr=\"PN\"><PersonName number=\"1\"><Alphabetic><FamilyName>ROSSI</FamilyName><GivenName>URBANO</GivenName></Alphabetic></PersonName></DicomAttribute><DicomAttribute keyword=\"PatientID\" tag=\"00100020\" vr=\"LO\"><Value number=\"1\">USB000123456</Value></DicomAttribute><DicomAttribute keyword=\"StudyInstanceUID\" tag=\"0020000D\" vr=\"UI\"><Value number=\"1\">1.2.826.0.1.3680043.2.97.2008.2008.2260375007.1411250805249840</Value></DicomAttribute></NativeDicomModel>",
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?><NativeDicomModel xml:space=\"preserve\"><DicomAttribute keyword=\"SpecificCharacterSet\" tag=\"00080005\" vr=\"CS\"><Value number=\"1\">ISO_IR 100</Value></DicomAttribute><DicomAttribute keyword=\"StudyDate\" tag=\"00080020\" vr=\"DA\"><Value number=\"1\">20141125</Value></DicomAttribute><DicomAttribute keyword=\"QueryRetrieveLevel\" tag=\"00080052\" vr=\"CS\"><Value number=\"1\">STUDY</Value></DicomAttribute><DicomAttribute keyword=\"RetrieveAETitle\" tag=\"00080054\" vr=\"AE\"><Value number=\"1\">OSIRIX</Value></DicomAttribute><DicomAttribute keyword=\"StudyDescription\" tag=\"00081030\" vr=\"LO\"><Value number=\"1\">Rm Colonna Dorsale</Value></DicomAttribute><DicomAttribute keyword=\"PatientName\" tag=\"00100010\" vr=\"PN\"><PersonName number=\"1\"><Alphabetic><FamilyName>ROSSI</FamilyName><GivenName>URBANO</GivenName></Alphabetic></PersonName></DicomAttribute><DicomAttribute keyword=\"PatientID\" tag=\"00100020\" vr=\"LO\"><Value number=\"1\">USB000123456</Value></DicomAttribute><DicomAttribute keyword=\"StudyInstanceUID\" tag=\"0020000D\" vr=\"UI\"><Value number=\"1\">1.2.826.0.1.3680043.2.97.2008.2008.3727469665.1411250805260930</Value></DicomAttribute></NativeDicomModel>",
@@ -78,6 +101,10 @@ public class PatientIDtoStudiesResolverTest {
 
     }
 
+    // TODO
+    /** perform actual test on OSIRIX */
+    public static void main(String[] args) {
 
+    }
 
 }
