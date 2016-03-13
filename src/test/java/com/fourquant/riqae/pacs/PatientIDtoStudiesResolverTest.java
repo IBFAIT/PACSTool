@@ -20,7 +20,7 @@ public class PatientIDtoStudiesResolverTest {
 
     static final String[] FINDSCU_TESTS_EXPECTED =
             {
-                   "findscu  -r PatientName -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID"
+                   "findscu -L STUDY  -r PatientName -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID"
                     + " -m PatientID=USB000123456 -m StudyDate=20000101-20200101 -c DO_NOT_EXECUTE@127.1.1.1:11112"
             };
 

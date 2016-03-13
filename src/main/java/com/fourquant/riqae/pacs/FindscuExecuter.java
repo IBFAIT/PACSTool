@@ -172,8 +172,7 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
        return new FileFilter() {
            @Override
            public boolean accept(File pathname) {
-               if (pathname.getName().endsWith(".dcm")
-                   && (pathname.getName().startsWith("r")))return true;
+               if (pathname.getName().endsWith(".dcm"))return true;
                return false;
            }
        };

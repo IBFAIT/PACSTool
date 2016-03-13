@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class PatientIDtoStudiesResolver {
 
-    private static final String FINDSCU= "findscu ";
+    private static final String FINDSCU= "findscu -L STUDY ";
     private static final String SPACE= " ";
     private static final String REQUESTS= " -r PatientName -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID";
     private static final String PATIENTID_TAG= " -m PatientID=";
