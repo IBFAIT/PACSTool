@@ -21,7 +21,9 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
     private static final String OUT_XML= "--xml";
     private static final String SPACE= " ";
    private static final String[] EMPTY_RESULTS= {""};
-   protected static String DO_NOT_EXECUTE= "--do-not-execute" ;  // used for texting only
+   protected static String DO_NOT_EXECUTE= "DO_NOT_EXECUTE" ;  // used for testing
+   protected static String DO_NOT_EXECUTE_DIR= "/tmp/" ;  // used for testing
+
 
 
 
@@ -33,7 +35,7 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
        // Find a safe location for temporary output files
       try {
           File outFile = File.createTempFile(TEMPFILE_PREFIX, TEMPFILE_POSTFIX);
-          _tempPath = outFile.getParent();
+          _tempPath = outFile.getParent()+"/";
           System.out.println(_tempPath);
           outFile.delete(); // cleanup
           cleanup(); // make sure directory does not contain any old output files
@@ -43,16 +45,6 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
       }
 
    }
-
-    public FindscuExecuter(String aetIPPort, String level, String requestedFields, String knownFields) {
-
-        StringBuffer buffy= new StringBuffer(FINDSCU);
-       buffy.append(SPACE+"-c "+aetIPPort);
-       buffy.append(SPACE+requestedFields);
-       buffy.append(SPACE+knownFields);
-    }
-
-
 
     /**
      *  Constructor with temporary path setting.  Useful primarily for testing class.
@@ -88,6 +80,7 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
        else  {
            System.out.println("NOT EXECUTING, but would have executed:");
            System.out.println(actualCommand);
+           _tempPath= DO_NOT_EXECUTE_DIR; // look in default directory for MOC files created for testing.
         }
         String[] results= readOutputFiles();
        cleanup();
@@ -128,7 +121,7 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
 
             while (line != null) {
                 result.append(line);
-                result.append("\n");
+                // result.append("\n");
                 line = buffy.readLine();
             }
             return result.toString();

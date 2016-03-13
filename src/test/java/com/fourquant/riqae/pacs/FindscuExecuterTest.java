@@ -20,14 +20,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class FindscuExecuterTest {
 
-    static final String TEST_TEMP_DIR = "/tmp/";
+    static final String TEMP_PATH= "/tmp/";
 
     static final String[] FINDSCU_TESTS_IN =
-            {"findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101",
+            {"findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c DO_NOT_EXECUTE@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101",
                     "findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /Users/tomjre/Desktop/USB_Projects/out"
             };
     static final String[] FINDSCU_TESTS_EXPECTED =
-            {"findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /tmp/ --xml ",
+            {"findscu  -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c DO_NOT_EXECUTE@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101 --out-dir /tmp/ --xml ",
                     "findscu  --do-not-execute -r PatientID -r StudyDate -r StudyDescription -r StudyInstanceUID -L STUDY -c OSIRIX@localhost:11112  -m PatientID=USB03570011 -m StudyDate=20100101-20170101  --out-dir /tmp/ --xml --out-dir /Users/tomjre/Desktop/USB_Projects/out"
             };
 
@@ -44,33 +44,13 @@ public class FindscuExecuterTest {
 
 
 
-    @Test
-    public void testTempFileCreation01() {
-        try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
-            assertEquals(TEST_TEMP_DIR, findscuExe.getTempPath());
-        } catch (Exception e) {
-            System.out.print(e);
-        }
-    }
 
-    @Test
-    public void testTempFileCreation02() {
-        try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
-
-            assertEquals("FindExecuter not forming output command completion"
-                    , FINDSCU_TESTS_EXPECTED[0], findscuExe.getFinalCommand(FINDSCU_TESTS_IN[0]));
-        } catch (Exception e) {
-            System.out.print(e);
-        }
-    }
 
     @Test
     public void testCommandAppendingOutDir() {
 
         try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
+            FindscuExecuter findscuExe = new FindscuExecuter(TEMP_PATH);
             assertEquals(FINDSCU_TESTS_EXPECTED[0], findscuExe.getFinalCommand(FINDSCU_TESTS_IN[0]));
 
         } catch (Exception e) {
@@ -82,7 +62,7 @@ public class FindscuExecuterTest {
     public void testCommandInsertingOutDir() {
 
         try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
+            FindscuExecuter findscuExe = new FindscuExecuter(TEMP_PATH);
             assertEquals(FINDSCU_TESTS_EXPECTED[1], findscuExe.getFinalCommand(FINDSCU_TESTS_IN[1]));
 
         } catch (Exception e) {
@@ -90,30 +70,18 @@ public class FindscuExecuterTest {
         }
     }
 
-    @Test
-    public void testCleanup() {
-        try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
-            generateMocResults(findscuExe.getTempPath());
-            findscuExe.cleanup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     @Test
     public void testExecute() {
         try {
-            FindscuExecuter findscuExe = new FindscuExecuter(TEST_TEMP_DIR);
-            generateMocResults(findscuExe.getTempPath());
+            FindscuExecuter findscuExe = new FindscuExecuter();
+            generateMocResults(findscuExe.DO_NOT_EXECUTE_DIR);
             String[] outArray= findscuExe.execute(FINDSCU_TESTS_IN[0]);
             int i=0;
             for (String out : outArray) {
-               System.out.println(MOCRESULTS[i++]);
-               System.out.println(out);
-               System.out.println("==========");
-                //assertEquals(MOCRESULTS[i++],out);
+               // last char may be an extra linefeed.
+                assertEquals(MOCRESULTS[i].substring(0,MOCRESULTS[i].length()-1),out.substring(0,out.length()-1));
+                i++;
             }
         } catch (Exception e) {
             e.printStackTrace();
