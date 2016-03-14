@@ -37,6 +37,7 @@ public class CSVDocReader {
     final String patientName = csvRecord.get(patientNameField);
     final String studyDate = csvRecord.get(studyDateField);
     final String studyDescription = csvRecord.get(studyDescriptionField);
+    final String seriesDescription = csvRecord.get(seriesDescriptionField);
     final String studyInstanceUid = csvRecord.get(studyInstanceUidField);
     final String seriesInstanceUid = csvRecord.get(seriesInstanceUIDField);
 
@@ -45,6 +46,7 @@ public class CSVDocReader {
     dataRow.setPatientName(patientName);
     dataRow.setStudyDate(studyDate);
     dataRow.setStudyDescription(studyDescription);
+    dataRow.setSeriesDescription(seriesDescription);
     dataRow.setStudyInstanceUid(studyInstanceUid);
     dataRow.setSeriesInstanceUID(seriesInstanceUid);
     return dataRow;

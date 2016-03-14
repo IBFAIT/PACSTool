@@ -6,13 +6,13 @@ import org.apache.commons.csv.CSVFormat;
 import static org.apache.commons.csv.CSVFormat.DEFAULT;
 
 public interface Protocol {
-  String patientNameField = "PatientName";
-  String patientIdField = "PatientID";
-  String studyDateField = "StudyDate";
-  String studyDescriptionField = "StudyDescription";
-  String seriesDescriptionFiedl = "SeriesDescription";
-  String studyInstanceUidField = "StudyInstance UID";
-  String seriesInstanceUIDField = "SeriesInstance UID";
+  String patientNameField = "Patient Name";
+  String patientIdField = "Patient ID";
+  String studyDateField = "Study Date";
+  String studyDescriptionField = "Study Description";
+  String seriesDescriptionField = "Series Description";
+  String studyInstanceUidField = "Study Instance UID";
+  String seriesInstanceUIDField = "Series Instance UID";
   String resultField = "Result";
 
   CSVFormat format = DEFAULT.
@@ -22,7 +22,7 @@ public interface Protocol {
               patientIdField,
               studyDateField,
               studyDescriptionField,
-              seriesDescriptionFiedl,
+              seriesDescriptionField,
               studyInstanceUidField,
               seriesInstanceUIDField,
               resultField).

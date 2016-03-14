@@ -36,7 +36,6 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
       try {
           File outFile = File.createTempFile(TEMPFILE_PREFIX, TEMPFILE_POSTFIX);
           _tempPath = outFile.getParent()+"/";
-          System.out.println(_tempPath);
           outFile.delete(); // cleanup
           cleanup(); // make sure directory does not contain any old output files
       } catch (IOException e) {
@@ -55,6 +54,21 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
         // Find a safe location for temporary output files
         _tempPath = tempPath;
      }
+
+  /**
+   * Provide File Filter for expected output files generated from command.
+   *
+   * @return filter to recognize command output files
+   */
+  protected static FileFilter getOutputFileFilter() {
+    return new FileFilter() {
+      @Override
+      public boolean accept(File pathname) {
+        return pathname.getName().endsWith(".dcm");
+      }
+    };
+
+  }
 
     /**
      *  reset resources
@@ -78,8 +92,6 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
             Process p = Runtime.getRuntime().exec(actualCommand);
         }
        else  {
-           System.out.println("NOT EXECUTING, but would have executed:");
-           System.out.println(actualCommand);
            _tempPath= DO_NOT_EXECUTE_DIR; // look in default directory for MOC files created for testing.
         }
         String[] results= readOutputFiles();
@@ -162,20 +174,5 @@ public class FindscuExecuter implements ThirdPartyToolExecutor  {
 
    public String toString() {
      return this.getClass().toString()+":"+this.getTempPath();
-   }
-
-    /**
-     *  Provide File Filter for expected output files generated from command.
-      * @return filter to recognize command output files
-     */
-   protected static FileFilter getOutputFileFilter() {
-       return new FileFilter() {
-           @Override
-           public boolean accept(File pathname) {
-               if (pathname.getName().endsWith(".dcm"))return true;
-               return false;
-           }
-       };
-
    }
 }

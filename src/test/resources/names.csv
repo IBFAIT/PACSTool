@@ -1,4 +1,4 @@
-Patient Name,Patient ID,Study Date,Study Description,Study Instance UID,Series Instance UID,Result
-Ashlee Simpson,,,,,,,,
-Donatella Versace,,,,,,,,
-Kate Moss,,,,,,
+Patient Name;Patient ID;Study Date;Study Description;Series Description;Study Instance UID;Series Instance UID;Result
+Ashlee Simpson;;;;;;;;;
+Donatella Versace;;;;;;;;;
+Kate Moss;;;;;;;;;

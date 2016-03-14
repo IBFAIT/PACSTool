@@ -43,7 +43,7 @@ public class ResponseWriterTest {
     PACSTool.ResponseWriter.write(dataRows);
     assertTrue(
           outContent.toString().
-                contains("Kate Moss,USB000123471,20111231,CT Thorax,591048351241.9457933,591048351241.9457933.5,"));
+                contains("Kate Moss;USB000123471;20111231;CT Thorax;Series Description;591048351241.9457933;591048351241.9457933.5;"));
   }
 
   @Test

@@ -10,10 +10,6 @@ public class DataRow {
   private String seriesInstanceUID;
   private String result;
 
-  public DataRow() {
-    patientName= patientId= studyDate= studyDescription= seriesDescription= studyInstanceUid= seriesInstanceUID= result= "NA";
-  }
-
   public String getPatientName() {
     return patientName;
   }

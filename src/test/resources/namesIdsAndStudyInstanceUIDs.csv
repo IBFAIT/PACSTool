@@ -1,6 +1,6 @@
-Patient Name,Patient ID,Study Date,Study Description,Study Instance UID,Series Instance UID,Result
-Ashlee Simpson,USB000429321,20130113,MRI Full Body,433524313593.2234231,,
-Donatella Versace,USB000123427,20150729,CT Thorax,142313351313.4354223,,
-Donatella Versace,USB000123427,20150729,CT Thorax,486233352421.9542052,,
-Donatella Versace,USB000123427,20150729,CT Thorax,852012532350.5820159,,
-Kate Moss,USB000123471,20111231,CT Thorax,591048351241.9457933,,
+Patient Name;Patient ID;Study Date;Study Description;Series Description;Study Instance UID;Series Instance UID;Result
+Ashlee Simpson;USB000429321;20130113;MRI Full Body;Series Desc;433524313593.2234231;;
+Donatella Versace;USB000123427;20150729;CT Thorax;Series Desc;142313351313.4354223;;
+Donatella Versace;USB000123427;20150729;CT Thorax;Series Desc;486233352421.9542052;;
+Donatella Versace;USB000123427;20150729;CT Thorax;Series Desc;852012532350.5820159;;
+Kate Moss;USB000123471;20111231;CT Thorax;Series Desc;591048351241.9457933;;

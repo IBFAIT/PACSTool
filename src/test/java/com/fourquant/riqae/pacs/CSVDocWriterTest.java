@@ -40,7 +40,7 @@ public class CSVDocWriterTest {
     writer.write(dataRows);
 
     final String header =
-          "Patient Name,Patient ID,Study Date,Study Description,Study Instance UID,Series Instance UID,Result";
+          "Patient Name;Patient ID;Study Date;Study Description;Series Description;Study Instance UID;Series Instance UID;Result";
     assertEquals(
           header,
           outContent.toString().trim());
