@@ -7,4 +7,11 @@ public class TestConstants {
 
   public final static String binaryPath =
         "/Users/nonlo/Downloads/dcm4che-3.3.7/bin/findscu";
+
+  public final static String[] patientNames = {"Brebix", "Wrix"};
+  public final static String[] patientIds = {"XsaDYa", "7rAgWJ"};
+  public final static String userName = "OSIRIX";
+  public final static String server = "localhost";
+  public final static String port = "11112";
+
 }

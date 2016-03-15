@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
 import static com.fourquant.riqae.pacs.PACSTool.optPatientNamesFile;
-import static com.fourquant.riqae.pacs.TestConstants.binaryPath;
+import static com.fourquant.riqae.pacs.TestConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,16 +50,16 @@ public class PACSToolTest {
         SAXException, ParseException, IOException, InterruptedException {
 
     final String[] args = new String[]{
-          "-patient-name", "Brebix",
-          "-patient-name", "Wrix",
-          "-s", "localhost",
-          "-u", "OSIRIX",
-          "-p", "11112",
+          "-patient-name", patientNames[0],
+          "-patient-name", patientNames[1],
+          "-s", server,
+          "-u", userName,
+          "-p", port,
           "-bp", binaryPath};
 
     PACSTool.main(args);
-    assertTrue(outContent.toString().contains("XsaDYa"));
-    assertTrue(outContent.toString().contains("7rAgWJ"));
+    assertTrue(outContent.toString().contains(patientIds[0]));
+    assertTrue(outContent.toString().contains(patientIds[1]));
   }
 
   /*

@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import static com.fourquant.riqae.pacs.TestConstants.binaryPath;
+import static com.fourquant.riqae.pacs.TestConstants.*;
 
 /**
  * Created by tomjre on 3/10/16.
@@ -60,8 +60,7 @@ public class FindScuExecutorTest {
   public void testOnFlaviosMacBook() throws IOException, InterruptedException {
     final FindScuCommandCreator findScuCommandCreator = new FindScuCommandCreator();
     final String findScuStatement = findScuCommandCreator.createFindScuStatement(
-          "BREBIX", "OSIRIX", "localhost", "11112", binaryPath);
-//    final FindscuExecuter findscuExe = new FindscuExecuter();
+          patientNames[0], userName, server, port, binaryPath);
 
     final FindScuExecutor findscuExe = new FindScuExecutor();
     final String[] execute = findscuExe.execute(findScuStatement);
@@ -71,7 +70,7 @@ public class FindScuExecutorTest {
       List<DataRow> convert = xml2CSVConverter.convert(s);
       for (DataRow dataRow : convert) {
 
-        Assert.assertEquals("XsaDYa", dataRow.getPatientId());
+        Assert.assertEquals(patientIds[0], dataRow.getPatientId());
       }
 
     }
