@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,6 +67,10 @@ public class XML2CSVConverter {
                 row.setPatientId(value);
                 break;
 
+              case "StudyInstanceUID":
+                row.setStudyInstanceUid(value);
+                break;
+
               case "StudyDate":
                 row.setStudyDate(value);
                 break;
@@ -75,16 +79,12 @@ public class XML2CSVConverter {
                 row.setStudyDescription(value);
                 break;
 
-              case "SeriesDescription":
-                row.setSeriesDescription(value);
-                break;
-
-              case "StudyInstanceUID":
-                row.setStudyInstanceUid(value);
-                break;
-
               case "SeriesInstanceUID":
                 row.setSeriesInstanceUID(value);
+                break;
+
+              case "SeriesDescription":
+                row.setSeriesDescription(value);
                 break;
 
               case "Result":

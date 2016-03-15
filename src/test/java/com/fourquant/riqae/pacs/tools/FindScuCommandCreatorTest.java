@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.tools;
 
 import org.apache.commons.cli.ParseException;
 import org.junit.After;
@@ -8,8 +8,8 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static com.fourquant.riqae.pacs.FindScuCommandCreator.main;
 import static com.fourquant.riqae.pacs.TestConstants.*;
+import static com.fourquant.riqae.pacs.tools.FindScuCommandCreator.main;
 import static org.junit.Assert.assertTrue;
 
 public class FindScuCommandCreatorTest {

@@ -1,11 +1,18 @@
 package com.fourquant.riqae.pacs;
 
+import com.fourquant.riqae.pacs.csv.CSVDocWriter;
+import com.fourquant.riqae.pacs.csv.DataRow;
+import com.fourquant.riqae.pacs.csv.XML2CSVConverter;
+import com.fourquant.riqae.pacs.executors.ThirdPartyToolExecutor;
+import com.fourquant.riqae.pacs.tools.FindScuCommandCreator;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
 import static com.fourquant.riqae.pacs.PACSFacade.Operation.resolvePatientIds;
+import static java.util.stream.Collectors.toList;
 
 public final class DefaultPACSFacade implements PACSFacade {
 
@@ -77,9 +84,8 @@ public final class DefaultPACSFacade implements PACSFacade {
 
       for (final String anXmlResult : xmlResult) {
         final List<DataRow> dataRows = xml2CSVConverter.convert(anXmlResult);
-        for (final DataRow row : dataRows) {
-          output.add(row);
-        }
+        output.addAll(
+              dataRows.stream().collect(toList()));
       }
 
       /*

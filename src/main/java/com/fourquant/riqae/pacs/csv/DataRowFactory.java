@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ public class DataRowFactory {
   private static final Logger log =
         Logger.getLogger(DataRowFactory.class.getName());
 
-  CSVDocReader csvDocReader = new CSVDocReader();
+  final CSVDocReader csvDocReader = new CSVDocReader();
 
   public final List<DataRow> create(final String[] patientNames) {
     return create(asList(patientNames));

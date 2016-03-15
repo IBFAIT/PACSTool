@@ -1,6 +1,10 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.tools;
 
-import com.fourquant.riqae.pacs.PACSTool.ResponseWriter;
+import com.fourquant.riqae.pacs.DefaultPACSFacade;
+import com.fourquant.riqae.pacs.csv.DataRow;
+import com.fourquant.riqae.pacs.csv.RequestFactory;
+import com.fourquant.riqae.pacs.csv.ResponseWriter;
+import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
 import org.apache.commons.cli.*;
 import org.junit.After;
 import org.junit.Before;
@@ -11,10 +15,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
-import static com.fourquant.riqae.pacs.PACSTool.optPatientNamesFile;
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -62,51 +67,57 @@ public class PACSToolTest {
     assertTrue(outContent.toString().contains(patientIds[1]));
   }
 
-  /*
+
   @Test
-  public void testWithPatientNameFile() throws ParserConfigurationException, SAXException, ParseException, IOException, InterruptedException {
+  public void testWithPatientNameFile() throws ParserConfigurationException,
+        SAXException, ParseException, IOException, InterruptedException {
+
     final String[] args = new String[]{
-          "-patient-names-file", getClass().getResource("/names.csv").getFile(), "-bp", "xxx"};
+          "-patient-names-file",
+          getClass().getResource("/osirixNames.csv").getFile(),
+          "-s", server,
+          "-u", userName,
+          "-p", port,
+          "-bp", binaryPath};
+
     PACSTool.main(args);
-    assertTrue(outContent.toString().contains(nameAshlee));
-    assertTrue(outContent.toString().contains(nameKate));
-    assertTrue(outContent.toString().contains(nameDonatella));
+    assertTrue(outContent.toString().contains(patientIds[0]));
+    assertTrue(outContent.toString().contains(patientIds[1]));
   }
 
-*/
-
-  /*
-
   @Test
-  public void testWithPatientNameFileAndOutputFile() throws ParserConfigurationException, SAXException, ParseException, IOException, InterruptedException {
+  public void testWithPatientNameFileAndOutputFile()
+        throws ParserConfigurationException, SAXException, ParseException,
+        IOException, InterruptedException {
+
     final String[] args = new String[]{
-          "-patient-names-file", getClass().getResource("/names.csv").getFile(),
-          "-output-file", getClass().getResource("/out.csv").getFile(), "-bp", "xxx"};
+          "-patient-names-file",
+          getClass().getResource("/osirixNames.csv").getFile(),
+          "-s", server,
+          "-u", userName,
+          "-p", port,
+          "-bp", binaryPath,
+          "-output-file", getClass().getResource("/out.csv").getFile()};
 
     PACSTool.main(args);
-    assertFalse(outContent.toString().contains(nameAshlee));
-    assertFalse(outContent.toString().contains(nameKate));
-    assertFalse(outContent.toString().contains(nameDonatella));
 
     final Path path =
           FileSystems.getDefault().getPath(getClass().getResource("/out.csv").getPath());
-    final List<String> outputLines = readAllLines(path);
+    final List<String> outputLines = Files.readAllLines(path);
     String output = "";
     for (String line : outputLines) {
       output += line;
     }
 
-    assertTrue(output.contains(nameAshlee));
-    assertTrue(output.contains(nameKate));
-    assertTrue(output.contains(nameDonatella));
+    assertTrue(output.contains(patientIds[0]));
+    assertTrue(output.contains(patientIds[1]));
   }
 
-  */
 
   @Test
   public void testPatientNamesFile() throws ParseException, IOException, InterruptedException {
     final CommandLineParser parser = new DefaultParser();
-    final Options options = PACSTool.OptionsFactory.createOptions();
+    final Options options = OptionsFactory.createOptions();
 
     final String[] args = new String[]{
           "-patient-names-file",
@@ -115,8 +126,8 @@ public class PACSToolTest {
     final CommandLine line;
     line = parser.parse(options, args);
 
-    String pnf = line.getOptionValue(optPatientNamesFile);
-    final List<DataRow> request = createRequest(pnf);
+    String pnf = line.getOptionValue(OptionsFactory.optPatientNamesFile);
+    final List<DataRow> request = RequestFactory.createRequest(pnf);
 
     final DefaultPACSFacade pacsFacade =
           new DefaultPACSFacade("localhost", 2133, "admin", "xxx");

@@ -1,2 +1,2 @@
-Patient Name;Patient ID;Study Date;Study Description;Series Description;Study Instance UID;Series Instance UID;Result
-Ashlee Simpson;USB000429321;20130113;MRI Full Body;Series Description;433524313593.2234231;1.2.40.0.13.1.1.99.13.1;
+Patient Name;Patient ID;Study Instance UID;Study Date;Study Description;Series Instance UID;Series Description;Result
+Ashlee Simpson;USB000429321;433524313593.2234231;20130113;MRI Full Body;1.2.40.0.13.1.1.99.13.1;Series Description;

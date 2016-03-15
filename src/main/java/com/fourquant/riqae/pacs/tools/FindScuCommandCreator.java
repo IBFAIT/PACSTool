@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.tools;
 
 import org.apache.commons.cli.*;
 
@@ -9,24 +9,6 @@ public class FindScuCommandCreator {
   public static final int PACS_SERVER_PORT_DEFAULT = 9090;
   public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
   public static final String PACS_SERVER_USER_DEFAULT = "john";
-
-  public static final String optPort = "p";
-  public static final String longOptPort = "port";
-
-  public static final String optServer = "s";
-  public static final String longOptServer = "server";
-
-  public static final String optUser = "u";
-  public static final String longOptUser = "user";
-
-  public static final String optPatientName = "pn";
-  public static final String longOptPatientName = "patient-name";
-
-  public static final String optBinaryPath = "bp";
-  public static final String longOptBinaryPath = "binaryPath";
-
-  public static final String optHelp = "h";
-  public static final String longOptHelp = "help";
 
   public static void main(final String[] args) throws ParseException {
     final CommandLineProcessor clp = new CommandLineProcessor(args);
@@ -82,8 +64,8 @@ public class FindScuCommandCreator {
 
     public String getServer() {
       final String server;
-      if (has(optServer))
-        server = line.getOptionValue(optServer);
+      if (has(OptionsFactory.optServer))
+        server = line.getOptionValue(OptionsFactory.optServer);
       else
         server = PACS_SERVER_ADDRESS_DEFAULT;
 
@@ -92,8 +74,8 @@ public class FindScuCommandCreator {
 
     public String getBinaryPath() {
       final String binaryPath;
-      if (has(optBinaryPath))
-        binaryPath = line.getOptionValue(optBinaryPath);
+      if (has(OptionsFactory.optBinaryPath))
+        binaryPath = line.getOptionValue(OptionsFactory.optBinaryPath);
       else
         throw new IllegalStateException();
 
@@ -102,8 +84,8 @@ public class FindScuCommandCreator {
 
     public int getPort() {
       final int port;
-      if (has(optPort))
-        port = parseInt(line.getOptionValue(optPort));
+      if (has(OptionsFactory.optPort))
+        port = parseInt(line.getOptionValue(OptionsFactory.optPort));
       else
         port = PACS_SERVER_PORT_DEFAULT;
 
@@ -113,8 +95,8 @@ public class FindScuCommandCreator {
     public String getUser() {
 
       final String user;
-      if (has(optUser))
-        user = line.getOptionValue(optUser);
+      if (has(OptionsFactory.optUser))
+        user = line.getOptionValue(OptionsFactory.optUser);
       else
         user = PACS_SERVER_USER_DEFAULT;
 
@@ -135,68 +117,16 @@ public class FindScuCommandCreator {
     }
 
     private boolean isHelp() {
-      return line.hasOption(optHelp);
+      return line.hasOption(OptionsFactory.optHelp);
     }
 
     private boolean hasPatientNames() {
-      return line.hasOption(optPatientName);
+      return line.hasOption(OptionsFactory.optPatientName);
     }
 
     public String[] getPatientNames() {
-      return line.getOptionValues(optPatientName);
+      return line.getOptionValues(OptionsFactory.optPatientName);
     }
   }
 
-  static final class OptionsFactory {
-    static Options createOptions() {
-      final Options options = new Options();
-
-      options.addOption(Option.builder(optServer)
-            .hasArg()
-            .argName("ip")
-            .required(false)
-            .longOpt(longOptServer)
-            .desc("PACS server IP address")
-            .build());
-
-      options.addOption(Option.builder(optPort)
-            .hasArg()
-            .argName("port")
-            .required(false)
-            .longOpt(longOptPort)
-            .desc("PACS server port number")
-            .build());
-
-      options.addOption(Option.builder(optUser)
-            .hasArg()
-            .argName("username")
-            .required(false)
-            .longOpt(longOptUser)
-            .desc("PACS server user")
-            .build());
-
-      options.addOption(Option.builder(optPatientName)
-            .hasArg()
-            .argName("patientname")
-            .required(false)
-            .longOpt(longOptPatientName)
-            .desc("Patient name")
-            .build());
-
-      options.addOption(Option.builder(optBinaryPath)
-            .hasArg()
-            .argName("binaryPath")
-            .required(true)
-            .longOpt(longOptBinaryPath)
-            .desc("Binary Path")
-            .build());
-
-      options.addOption(Option.builder(optHelp)
-            .required(false)
-            .longOpt(longOptHelp)
-            .desc("This help message")
-            .build());
-      return options;
-    }
-  }
 }

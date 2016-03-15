@@ -1,13 +1,13 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 public class DataRow {
   private String patientName;
   private String patientId;
+  private String studyInstanceUid;
   private String studyDate;
   private String studyDescription;
-  private String seriesDescription;
-  private String studyInstanceUid;
   private String seriesInstanceUID;
+  private String seriesDescription;
   private String result;
 
   public String getPatientName() {
@@ -80,10 +80,10 @@ public class DataRow {
           "patientName='" + patientName + '\'' +
           ", patientId='" + patientId + '\'' +
           ", studyDate='" + studyDate + '\'' +
-          ", studyDescription='" + studyDescription + '\'' +
-          ", seriesDescription='" + seriesDescription + '\'' +
           ", studyInstanceUid='" + studyInstanceUid + '\'' +
+          ", studyDescription='" + studyDescription + '\'' +
           ", seriesInstanceUID='" + seriesInstanceUID + '\'' +
+          ", seriesDescription='" + seriesDescription + '\'' +
           ", result='" + result + '\'' +
           '}';
   }

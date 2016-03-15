@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.executors;
 
 import org.junit.Assert;
 import org.junit.Test;

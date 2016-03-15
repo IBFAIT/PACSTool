@@ -17,11 +17,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>1.48</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -67,7 +62,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.fourquant.riqae.pacs.PACSTool
+                            <mainClass>com.fourquant.riqae.pacs.tools.PACSTool
                             </mainClass>
                         </manifest>
                     </archive>
@@ -88,7 +83,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>
-                                        com.fourquant.riqae.pacs.PACSTool
+                                        com.fourquant.riqae.pacs.tools.PACSTool
                                     </mainClass>
                                 </transformer>
                             </transformers>

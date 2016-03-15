@@ -1,10 +1,14 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import static com.fourquant.riqae.pacs.TestConstants.*;
+import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.*;
 
 public class DataRowFactoryTest {
@@ -33,11 +37,8 @@ public class DataRowFactoryTest {
           factory.create(
                 getClass().getResource("/names.csv").getFile());
 
-    final Set<String> patientNames = new HashSet<>();
-
-    for (DataRow dataRow : dataRows) {
-      patientNames.add(dataRow.getPatientName());
-    }
+    final Set<String> patientNames =
+          dataRows.stream().map(DataRow::getPatientName).collect(toSet());
 
     assertTrue(patientNames.contains(nameAshlee));
     assertTrue(patientNames.contains(nameDonatella));

@@ -1,5 +1,8 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
+import com.fourquant.riqae.pacs.DefaultPACSFacade;
+import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
+import com.fourquant.riqae.pacs.tools.OptionsFactory;
 import org.apache.commons.cli.*;
 import org.junit.After;
 import org.junit.Before;
@@ -10,11 +13,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import static com.fourquant.riqae.pacs.PACSTool.RequestFactory.createRequest;
-import static com.fourquant.riqae.pacs.PACSTool.optBinaryPath;
-import static com.fourquant.riqae.pacs.PACSTool.optPatientName;
 import static com.fourquant.riqae.pacs.TestConstants.binaryPath;
 import static com.fourquant.riqae.pacs.TestConstants.nameKate;
+import static com.fourquant.riqae.pacs.csv.RequestFactory.createRequest;
+import static com.fourquant.riqae.pacs.tools.OptionsFactory.optPatientName;
 import static org.junit.Assert.assertTrue;
 
 public class ResponseWriterTest {
@@ -42,10 +44,10 @@ public class ResponseWriterTest {
                 getFile();
 
     final List<DataRow> dataRows = createRequest(namesFile);
-    PACSTool.ResponseWriter.write(dataRows);
+    ResponseWriter.write(dataRows);
     assertTrue(
           outContent.toString().
-                contains("Kate Moss;USB000123471;20111231;CT Thorax;Series Description;591048351241.9457933;591048351241.9457933.5;"));
+                contains("Kate Moss;USB000123471;591048351241.9457933;20111231;CT Thorax;591048351241.9457933.5;Series Description;"));
   }
 
   @Test
@@ -53,10 +55,10 @@ public class ResponseWriterTest {
         InterruptedException {
 
     final CommandLineParser parser = new DefaultParser();
-    final Options options = PACSTool.OptionsFactory.createOptions();
+    final Options options = OptionsFactory.createOptions();
 
     String[] args = new String[]{"-" + optPatientName, nameKate, "-" +
-          optBinaryPath, binaryPath};
+          OptionsFactory.optBinaryPath, binaryPath};
 
     final CommandLine line;
     line = parser.parse(options, args);
@@ -73,7 +75,7 @@ public class ResponseWriterTest {
 
     final List<DataRow> response = pacsFacade.process(request);
 
-    PACSTool.ResponseWriter.write(response);
+    ResponseWriter.write(response);
 
     final String out = outContent.toString();
     assertTrue(out.contains(nameKate));

@@ -1,5 +1,10 @@
 package com.fourquant.riqae.pacs;
 
+import com.fourquant.riqae.pacs.csv.DataRow;
+import com.fourquant.riqae.pacs.csv.DataRowFactory;
+import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
+import com.fourquant.riqae.pacs.executors.ThirdPartyToolExecutor;
+import com.fourquant.riqae.pacs.tools.OptionsFactory;
 import org.apache.commons.cli.*;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -57,7 +62,7 @@ public class DefaultPACSFacadeTest {
     final String binaryExpected = "/bin/foo";
 
     final CommandLineParser parser = new DefaultParser();
-    final Options options = PACSTool.OptionsFactory.createOptions();
+    final Options options = OptionsFactory.createOptions();
 
     String[] args = new String[]{
           "-s", serverExpected,

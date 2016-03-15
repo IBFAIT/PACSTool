@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.csv;
 
 import org.junit.Test;
 
@@ -39,8 +39,10 @@ public class CSVDocWriterTest {
     final List<DataRow> dataRows = new ArrayList<>();
     writer.write(dataRows);
 
+    //Patient Name;Patient ID;Study Instance UID;Study Date;Study Description;Series Instance UID;Series Description;Result
+
     final String header =
-          "Patient Name;Patient ID;Study Date;Study Description;Series Description;Study Instance UID;Series Instance UID;Result";
+          "Patient Name;Patient ID;Study Instance UID;Study Date;Study Description;Series Instance UID;Series Description;Result";
     assertEquals(
           header,
           outContent.toString().trim());

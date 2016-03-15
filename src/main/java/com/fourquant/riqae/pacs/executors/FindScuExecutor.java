@@ -1,4 +1,4 @@
-package com.fourquant.riqae.pacs;
+package com.fourquant.riqae.pacs.executors;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,12 +15,7 @@ public class FindScuExecutor implements ThirdPartyToolExecutor {
   private static final String SPACE = " ";
 
   protected static FileFilter getOutputFileFilter() {
-    return new FileFilter() {
-      @Override
-      public boolean accept(File pathname) {
-        return pathname.getName().endsWith(".dcm");
-      }
-    };
+    return pathname -> pathname.getName().endsWith(".dcm");
   }
 
   @Override
