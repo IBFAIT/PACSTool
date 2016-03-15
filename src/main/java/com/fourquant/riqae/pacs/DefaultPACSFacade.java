@@ -105,7 +105,7 @@ public final class DefaultPACSFacade implements PACSFacade {
 
     final CSVDocWriter csvDocWriter = new CSVDocWriter();
     final StringBuffer buffer = new StringBuffer();
-    csvDocWriter.write(output, buffer);
+    csvDocWriter.writeDataRows(output, buffer);
 
     return output;
   }

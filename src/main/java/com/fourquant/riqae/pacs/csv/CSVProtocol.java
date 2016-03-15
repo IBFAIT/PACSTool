@@ -5,7 +5,7 @@ import org.apache.commons.csv.CSVFormat;
 
 import static org.apache.commons.csv.CSVFormat.DEFAULT;
 
-public interface Protocol {
+public interface CSVProtocol {
   String patientNameField = "Patient Name";
   String patientIdField = "Patient ID";
   String studyInstanceUidField = "Study Instance UID";

@@ -3,9 +3,9 @@ package com.fourquant.riqae.pacs.tools;
 
 import com.fourquant.riqae.pacs.DefaultPACSFacade;
 import com.fourquant.riqae.pacs.PACSFacade;
+import com.fourquant.riqae.pacs.csv.CSVDocReader;
+import com.fourquant.riqae.pacs.csv.CSVDocWriter;
 import com.fourquant.riqae.pacs.csv.DataRow;
-import com.fourquant.riqae.pacs.csv.RequestFactory;
-import com.fourquant.riqae.pacs.csv.ResponseWriter;
 import com.fourquant.riqae.pacs.executors.FindScuExecutor;
 import com.fourquant.riqae.pacs.executors.ThirdPartyToolExecutor;
 import org.apache.commons.cli.*;
@@ -40,12 +40,13 @@ public final class PACSTool {
     final String[] patientNames = clp.getPatientNames();
     final String binaryPath = clp.getBinaryPath();
 
-    final List<DataRow> pacsRequest;
+    final List<DataRow> dataRowsInput;
+    final CSVDocReader csvDocReader = new CSVDocReader();
 
     if (clp.patientNamesFileSet()) {
-      pacsRequest = RequestFactory.createRequest(patientNamesFile);
+      dataRowsInput = csvDocReader.createDataRows(patientNamesFile);
     } else if (clp.patientNamesSet()) {
-      pacsRequest = RequestFactory.createRequest(patientNames);
+      dataRowsInput = csvDocReader.createDataRows(patientNames);
     } else {
       throw new IllegalStateException();
     }
@@ -63,12 +64,14 @@ public final class PACSTool {
 
     pacsFacade.setThirdPartyToolExecutor(findScuExecutor);
 
-    final List<DataRow> pacsResponse = pacsFacade.process(pacsRequest);
+    final List<DataRow> dataRowsOutput = pacsFacade.process(dataRowsInput);
+
+    final CSVDocWriter csvDocWriter = new CSVDocWriter();
 
     if (clp.outputFileSet()) {
-      ResponseWriter.write(pacsResponse, outputFile);
+      csvDocWriter.writeDataRows(dataRowsOutput, outputFile);
     } else
-      ResponseWriter.write(pacsResponse);
+      csvDocWriter.writeDataRows(dataRowsOutput);
   }
 
   static final class CommandLineProcessor {

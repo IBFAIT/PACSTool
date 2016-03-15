@@ -1,9 +1,9 @@
 package com.fourquant.riqae.pacs.tools;
 
 import com.fourquant.riqae.pacs.DefaultPACSFacade;
+import com.fourquant.riqae.pacs.csv.CSVDocReader;
+import com.fourquant.riqae.pacs.csv.CSVDocWriter;
 import com.fourquant.riqae.pacs.csv.DataRow;
-import com.fourquant.riqae.pacs.csv.RequestFactory;
-import com.fourquant.riqae.pacs.csv.ResponseWriter;
 import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
 import org.apache.commons.cli.*;
 import org.junit.After;
@@ -115,7 +115,9 @@ public class PACSToolTest {
 
 
   @Test
-  public void testPatientNamesFile() throws ParseException, IOException, InterruptedException {
+  public void testPatientNamesFile() throws ParseException,
+        IOException, InterruptedException {
+
     final CommandLineParser parser = new DefaultParser();
     final Options options = OptionsFactory.createOptions();
 
@@ -127,7 +129,10 @@ public class PACSToolTest {
     line = parser.parse(options, args);
 
     String pnf = line.getOptionValue(OptionsFactory.optPatientNamesFile);
-    final List<DataRow> request = RequestFactory.createRequest(pnf);
+
+    final CSVDocReader csvDocReader = new CSVDocReader();
+
+    final List<DataRow> request = csvDocReader.createDataRows(pnf);
 
     final DefaultPACSFacade pacsFacade =
           new DefaultPACSFacade("localhost", 2133, "admin", "xxx");
@@ -139,7 +144,9 @@ public class PACSToolTest {
 
     final List<DataRow> response = pacsFacade.process(request);
 
-    ResponseWriter.write(response);
+    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+
+    csvDocWriter.writeDataRows(response);
 
     final String out = outContent.toString();
     assertTrue(out.contains("Ashlee Simpson"));

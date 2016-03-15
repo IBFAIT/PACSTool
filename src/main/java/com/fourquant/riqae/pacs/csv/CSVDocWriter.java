@@ -9,30 +9,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static com.fourquant.riqae.pacs.csv.Protocol.format;
+import static com.fourquant.riqae.pacs.csv.CSVProtocol.format;
 
 
 public class CSVDocWriter {
   private static final Logger log =
         Logger.getLogger(CSVDocWriter.class.getName());
 
-  public final void write(
-        final List<DataRow> dataRows,
-        final String filePath) {
+  public final void writeDataRows(final List<DataRow> dataRows,
+                                  final String filePath) {
 
     try {
       final FileWriter fw = new FileWriter(filePath);
-      write(dataRows, fw);
+      writeDataRows(dataRows, fw);
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
   }
 
-  public final void write(final List<DataRow> dataRows) throws IOException {
-    write(dataRows, System.out);
+  public final void writeDataRows(final List<DataRow> dataRows) throws IOException {
+    writeDataRows(dataRows, System.out);
   }
 
-  public final void write(
+  public final void writeDataRows(
         final List<DataRow> dataRows,
         final Appendable appendable) throws IOException {
 
@@ -55,4 +54,5 @@ public class CSVDocWriter {
     p.flush();
     p.close();
   }
+
 }

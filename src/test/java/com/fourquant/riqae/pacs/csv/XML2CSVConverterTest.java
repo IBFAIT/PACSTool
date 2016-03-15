@@ -28,7 +28,7 @@ public class XML2CSVConverterTest {
 
     final StringBuffer buffer = new StringBuffer();
 
-    csvDocWriter.write(dataRows, buffer);
+    csvDocWriter.writeDataRows(dataRows, buffer);
 
     final String actual =
           buffer.toString()

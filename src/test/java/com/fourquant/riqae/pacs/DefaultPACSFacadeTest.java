@@ -1,7 +1,7 @@
 package com.fourquant.riqae.pacs;
 
+import com.fourquant.riqae.pacs.csv.CSVDocReader;
 import com.fourquant.riqae.pacs.csv.DataRow;
-import com.fourquant.riqae.pacs.csv.DataRowFactory;
 import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
 import com.fourquant.riqae.pacs.executors.ThirdPartyToolExecutor;
 import com.fourquant.riqae.pacs.tools.OptionsFactory;
@@ -101,10 +101,11 @@ public class DefaultPACSFacadeTest {
   public void testProcessWithPatientNames() throws ParserConfigurationException,
         SAXException, IOException, InterruptedException {
 
-    final DataRowFactory DataRowFactory = new DataRowFactory();
+    final CSVDocReader csvDocReader = new CSVDocReader();
+
     final List<String> patientNames = new ArrayList<>();
     patientNames.add(nameAshlee);
-    final List<DataRow> dataRows = DataRowFactory.create(patientNames);
+    final List<DataRow> dataRows = csvDocReader.createDataRows(patientNames);
 
     pacsFacade.setThirdPartyToolExecutor(
           new DummyThirdPartyToolExecutor(
@@ -123,10 +124,11 @@ public class DefaultPACSFacadeTest {
   public void testProcessWithPatientIds() throws ParserConfigurationException,
         SAXException, IOException, InterruptedException {
 
-    final DataRowFactory DataRowFactory = new DataRowFactory();
+    final CSVDocReader csvDocReader = new CSVDocReader();
+
     final List<String> patientNames = new ArrayList<>();
     patientNames.add(nameAshlee);
-    final List<DataRow> dataRows = DataRowFactory.create(patientNames);
+    final List<DataRow> dataRows = csvDocReader.createDataRows(patientNames);
 
     pacsFacade.setThirdPartyToolExecutor(new ThirdPartyToolExecutor() {
       @Override
@@ -175,12 +177,11 @@ public class DefaultPACSFacadeTest {
           new DummyThirdPartyToolExecutor(
                 new String[]{"ashlee.xml", "donatella.xml", "kate.xml"}));
 
-    final DataRowFactory factory = new DataRowFactory();
+    final CSVDocReader csvDocReader = new CSVDocReader();
 
     final List<DataRow> input =
-          factory.create(
-                getClass().
-                      getResource("/namesIdsAndStudyInstanceUIDs.csv").getFile());
+          csvDocReader.createDataRows(getClass().
+                getResource("/namesIdsAndStudyInstanceUIDs.csv").getFile());
 
     final List<DataRow> output = pacsFacade.process(input);
     // TODO
