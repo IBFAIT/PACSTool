@@ -40,7 +40,7 @@ public class FindScuCommandCreatorTest {
     main(args);
     final String expected =
           binaryPath + " -r PatientID -c john@localhost:9090 -m PatientName=" +
-                nameAshlee;
+                "\"" + nameAshlee + "\"";
 
     assertTrue(outContent.toString().contains(expected));
   }
@@ -58,8 +58,8 @@ public class FindScuCommandCreatorTest {
 
     main(args);
     final String expected =
-          binaryPath + " -r PatientID -c foo@10.10.22.22:666 -m PatientName=" +
-                nameAshlee;
+          binaryPath + " -r PatientID -c foo@10.10.22.22:666 -m PatientName=" + "\"" +
+                nameAshlee + "\"";
 
     assertTrue(outContent.toString().contains(expected));
   }
