@@ -30,39 +30,37 @@ public class FindScuCommandCreatorTest {
   }
 
   @Test
-  public void testFindScuCommandCreatorBasic() {
+  public void testFindScuCommandCreatorBasic() throws ParseException {
 
     final String[] args = {"-pn", nameAshlee,
           "-pn", nameKate,
-          "-pn", nameDonatella};
-    try {
-      main(args);
-      final String expected =
-            "findscu -c john@localhost:9090 -m PatientName=" + nameAshlee;
+          "-pn", nameDonatella,
+          "-binaryPath", binaryPath};
 
-      assertTrue(outContent.toString().contains(expected));
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+    main(args);
+    final String expected =
+          binaryPath + " -r PatientID -c john@localhost:9090 -m PatientName=" +
+                nameAshlee;
+
+    assertTrue(outContent.toString().contains(expected));
   }
 
   @Test
-  public void testFindScuCommandCreatorParams() {
+  public void testFindScuCommandCreatorParams() throws ParseException {
 
     final String[] args = {"-pn", nameAshlee,
           "-pn", nameKate,
           "-pn", nameDonatella,
           "-s", "10.10.22.22",
           "-p", "666",
-          "-u", "foo"};
-    try {
-      main(args);
-      final String expected =
-            "findscu -c foo@10.10.22.22:666 -m PatientName=" + TestConstants.nameAshlee;
+          "-u", "foo",
+          "-binaryPath", binaryPath};
 
-      assertTrue(outContent.toString().contains(expected));
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
+    main(args);
+    final String expected =
+          binaryPath + " -r PatientID -c foo@10.10.22.22:666 -m PatientName=" +
+                nameAshlee;
+
+    assertTrue(outContent.toString().contains(expected));
   }
 }

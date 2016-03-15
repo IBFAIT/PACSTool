@@ -18,16 +18,20 @@ public final class DefaultPACSFacade implements PACSFacade {
 
   private final String user;
 
+  private final String binaryPath;
+
   private ThirdPartyToolExecutor thirdPartyToolExecutor;
 
   public DefaultPACSFacade(
         final String server,
         final int port,
-        final String user) {
+        final String user,
+        final String binaryPath) {
 
     this.server = server;
     this.port = port;
     this.user = user;
+    this.binaryPath = binaryPath;
   }
 
   public final String getServer() {
@@ -43,13 +47,13 @@ public final class DefaultPACSFacade implements PACSFacade {
   }
 
   public List<DataRow> process(
-        final List<DataRow> input) throws IOException {
+        final List<DataRow> input) throws IOException, InterruptedException {
     return process(input, resolvePatientIds);
   }
 
   public List<DataRow> process(
         final List<DataRow> input,
-        Operation operation) throws IOException {
+        Operation operation) throws IOException, InterruptedException {
 
 //todo use operation
 
@@ -64,7 +68,7 @@ public final class DefaultPACSFacade implements PACSFacade {
 
       final String findSCUCall =
             findScuCommandCreator.createFindScuStatement(
-                  patientName, user, server, Integer.toString(port));
+                  patientName, user, server, Integer.toString(port), binaryPath);
 
       final String[] xmlResult =
             thirdPartyToolExecutor.execute(findSCUCall);
@@ -77,7 +81,6 @@ public final class DefaultPACSFacade implements PACSFacade {
           output.add(row);
         }
       }
-
 
       /*
 

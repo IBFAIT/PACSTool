@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class DummyThirdPartyToolExecutorTest {
   @Test
-  public void testFindDonatella() {
+  public void testFindDonatella() throws IOException {
 
     final String[] dataFiles
           = new String[]{"donatella.xml"};
@@ -15,11 +15,7 @@ public class DummyThirdPartyToolExecutorTest {
     final DummyThirdPartyToolExecutor executor =
           new DummyThirdPartyToolExecutor(dataFiles);
 
-    try {
       final String[] result = executor.execute("findscu -...");
       Assert.assertTrue(result[0].contains("Donatella"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 }

@@ -1,18 +1,22 @@
 package com.fourquant.riqae.pacs;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static com.fourquant.riqae.pacs.TestConstants.binaryPath;
 
 /**
  * Created by tomjre on 3/10/16.
  */
-public class FindscuExecuterTest {
+public class FindScuExecutorTest {
 
   static final String TEMP_PATH = "/tmp/";
 
@@ -41,59 +45,35 @@ public class FindscuExecuterTest {
     System.setErr(null);
   }
 
-  @Test
-  public void testCommandAppendingOutDir() {
 
-    try {
-      FindscuExecuter findscuExe = new FindscuExecuter(TEMP_PATH);
-      assertEquals(FINDSCU_TESTS_EXPECTED[0], findscuExe.getFinalCommand(FINDSCU_TESTS_IN[0]));
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  public void testCommandInsertingOutDir() {
-
-    try {
-      FindscuExecuter findscuExe = new FindscuExecuter(TEMP_PATH);
-      assertEquals(FINDSCU_TESTS_EXPECTED[1], findscuExe.getFinalCommand(FINDSCU_TESTS_IN[1]));
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
-  public void testExecute() throws IOException {
-    FindscuExecuter findscuExe = new FindscuExecuter();
-    generateMocResults(FindscuExecuter.DO_NOT_EXECUTE_DIR);
-    String[] outArray = findscuExe.execute(FINDSCU_TESTS_IN[0]);
-    int i = 0;
-    for (String out : outArray) {
-      // last char may be an extra linefeed.
-      assertEquals(
-            MOCRESULTS[i].substring(0, MOCRESULTS[i].length() - 1),
-            out.substring(0, out.length() - 1));
+  public void generateMocResults(String tempPath) throws FileNotFoundException, UnsupportedEncodingException {
+    int i = 1;
+    for (String moc : MOCRESULTS) {
+      PrintWriter writer = new PrintWriter(tempPath + "r00" + String.valueOf(i) + ".dcm", "UTF-8");
+      writer.println(moc);
+      writer.close();
       i++;
     }
   }
 
-  public void generateMocResults(String tempPath) {
-    try {
-      int i = 1;
-      for (String moc : MOCRESULTS) {
-        PrintWriter writer = new PrintWriter(tempPath + "r00" + String.valueOf(i) + ".dcm", "UTF-8");
-        writer.println(moc);
-        writer.close();
-        i++;
+  @Test
+  public void testOnFlaviosMacBook() throws IOException, InterruptedException {
+    final FindScuCommandCreator findScuCommandCreator = new FindScuCommandCreator();
+    final String findScuStatement = findScuCommandCreator.createFindScuStatement(
+          "BREBIX", "OSIRIX", "localhost", "11112", binaryPath);
+//    final FindscuExecuter findscuExe = new FindscuExecuter();
+
+    final FindScuExecutor findscuExe = new FindScuExecutor();
+    final String[] execute = findscuExe.execute(findScuStatement);
+    for (final String s : execute) {
+
+      final XML2CSVConverter xml2CSVConverter = new XML2CSVConverter();
+      List<DataRow> convert = xml2CSVConverter.convert(s);
+      for (DataRow dataRow : convert) {
+
+        Assert.assertEquals("XsaDYa", dataRow.getPatientId());
       }
 
-
-    } catch (Exception e) {
-      e.printStackTrace();
     }
-
   }
 }

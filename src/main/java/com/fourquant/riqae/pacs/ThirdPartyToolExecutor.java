@@ -11,5 +11,6 @@ public interface ThirdPartyToolExecutor {
    * @param command The actual command
    *                (e.g. findscu -c DCMQRSCP@localhost:11112 -r PatientID -m PatientName=John^Doe)
    */
-  String[] execute(String command) throws IOException;
+  String[] execute(String command) throws IOException, InterruptedException;
+
 }

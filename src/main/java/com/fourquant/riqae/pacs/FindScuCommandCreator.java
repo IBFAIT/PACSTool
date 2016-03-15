@@ -22,6 +22,9 @@ public class FindScuCommandCreator {
   public static final String optPatientName = "pn";
   public static final String longOptPatientName = "patient-name";
 
+  public static final String optBinaryPath = "bp";
+  public static final String longOptBinaryPath = "binaryPath";
+
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
@@ -36,10 +39,11 @@ public class FindScuCommandCreator {
     final int port = clp.getPort();
     final String user = clp.getUser();
     final String[] patientNames = clp.getPatientNames();
+    final String binaryPath = clp.getBinaryPath();
 
     final String[] findScuStatements =
           new FindScuCommandCreator().createFindScuStatements(
-                patientNames, user, server, Integer.toString(port));
+                patientNames, user, server, Integer.toString(port), binaryPath);
 
     for (final String findScuStatement : findScuStatements) {
       System.out.println(findScuStatement);
@@ -48,19 +52,21 @@ public class FindScuCommandCreator {
 
   public final String[] createFindScuStatements(
         final String[] patientNames, final String user,
-        final String server, final String port) {
+        final String server, final String port, final String binaryPath) {
+
     final String[] findScuCommands = new String[patientNames.length];
+
     for (int i = 0; i < patientNames.length; i++) {
       findScuCommands[i] = createFindScuStatement(
-            patientNames[i], user, server, port);
+            patientNames[i], user, server, port, binaryPath);
     }
     return findScuCommands;
   }
 
   public final String createFindScuStatement(
         final String patientName, final String user,
-        final String server, final String port) {
-    return "findscu -c " + user + "@" + server + ":" + port +
+        final String server, final String port, final String binaryPath) {
+    return binaryPath + " -r PatientID -c " + user + "@" + server + ":" + port +
           " -m PatientName=" + patientName + "";
   }
 
@@ -75,7 +81,6 @@ public class FindScuCommandCreator {
     }
 
     public String getServer() {
-
       final String server;
       if (has(optServer))
         server = line.getOptionValue(optServer);
@@ -83,6 +88,16 @@ public class FindScuCommandCreator {
         server = PACS_SERVER_ADDRESS_DEFAULT;
 
       return server;
+    }
+
+    public String getBinaryPath() {
+      final String binaryPath;
+      if (has(optBinaryPath))
+        binaryPath = line.getOptionValue(optBinaryPath);
+      else
+        throw new IllegalStateException();
+
+      return binaryPath;
     }
 
     public int getPort() {
@@ -166,6 +181,14 @@ public class FindScuCommandCreator {
             .required(false)
             .longOpt(longOptPatientName)
             .desc("Patient name")
+            .build());
+
+      options.addOption(Option.builder(optBinaryPath)
+            .hasArg()
+            .argName("binaryPath")
+            .required(true)
+            .longOpt(longOptBinaryPath)
+            .desc("Binary Path")
             .build());
 
       options.addOption(Option.builder(optHelp)

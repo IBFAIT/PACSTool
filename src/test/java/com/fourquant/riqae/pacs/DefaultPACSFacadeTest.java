@@ -22,20 +22,23 @@ public class DefaultPACSFacadeTest {
   private final static String server = "localhost";
   private final static int port = 8924;
   private final static String user = "admin";
+  private final static String binaryPath = "xxx";
 
   private final DefaultPACSFacade pacsFacade =
-        new DefaultPACSFacade(server, port, user);
+        new DefaultPACSFacade(server, port, user, binaryPath);
 
   @Test
   public void testCreatePACSFacadeFactoryWithParams() {
     final String serverExpected = "103.231.642.242";
     final int portExpected = 2423;
     final String userExpected = "admin";
+    final String binaryPathExpected = "xxx";
 
     final DefaultPACSFacade pacsFacade = new DefaultPACSFacade(
           serverExpected,
           portExpected,
-          userExpected);
+          userExpected,
+          binaryPathExpected);
 
     final String serverActual = pacsFacade.getServer();
     final int portActual = pacsFacade.getPort();
@@ -47,10 +50,11 @@ public class DefaultPACSFacadeTest {
   }
 
   @Test
-  public void testCreatePACSFacadeFactoryWithCMD() {
+  public void testCreatePACSFacadeFactoryWithCMD() throws ParseException {
     final String serverExpected = "103.231.642.242";
     final int portExpected = 2423;
     final String userExpected = "admin";
+    final String binaryExpected = "/bin/foo";
 
     final CommandLineParser parser = new DefaultParser();
     final Options options = PACSTool.OptionsFactory.createOptions();
@@ -58,17 +62,17 @@ public class DefaultPACSFacadeTest {
     String[] args = new String[]{
           "-s", serverExpected,
           "-p", Integer.toString(portExpected),
-          "-u", userExpected};
+          "-u", userExpected,
+          "-bp", binaryExpected};
     final CommandLine line;
 
-    try {
       line = parser.parse(options, args);
 
       final DefaultPACSFacade facade =
             new DefaultPACSFacade(
                   line.getOptionValue("s"),
                   parseInt(line.getOptionValue("p")),
-                  line.getOptionValue("u"));
+                  line.getOptionValue("u"), binaryExpected);
 
       final String serverActual = facade.getServer();
       final int portActual = facade.getPort();
@@ -77,21 +81,20 @@ public class DefaultPACSFacadeTest {
       assertEquals(serverExpected, serverActual);
       assertEquals(portExpected, portActual);
       assertEquals(userExpected, userActual);
-    } catch (final ParseException e) {
-
-      e.printStackTrace();
-    }
   }
 
   @Test
-  public void testResponseNotNull() throws ParserConfigurationException, SAXException, IOException {
+  public void testResponseNotNull() throws ParserConfigurationException,
+        SAXException, IOException, InterruptedException {
+
     final List<DataRow> pacsMapObject = new ArrayList<>();
     final List<DataRow> dataRows = pacsFacade.process(pacsMapObject);
     assertNotNull(dataRows);
   }
 
   @Test
-  public void testProcessWithPatientNames() throws ParserConfigurationException, SAXException, IOException {
+  public void testProcessWithPatientNames() throws ParserConfigurationException,
+        SAXException, IOException, InterruptedException {
 
     final DataRowFactory DataRowFactory = new DataRowFactory();
     final List<String> patientNames = new ArrayList<>();
@@ -112,7 +115,8 @@ public class DefaultPACSFacadeTest {
   }
 
   @Test
-  public void testProcessWithPatientIds() throws ParserConfigurationException, SAXException, IOException {
+  public void testProcessWithPatientIds() throws ParserConfigurationException,
+        SAXException, IOException, InterruptedException {
 
     final DataRowFactory DataRowFactory = new DataRowFactory();
     final List<String> patientNames = new ArrayList<>();
@@ -121,15 +125,11 @@ public class DefaultPACSFacadeTest {
 
     pacsFacade.setThirdPartyToolExecutor(new ThirdPartyToolExecutor() {
       @Override
-      public String[] execute(String command) {
-        try {
+      public String[] execute(String command) throws IOException {
           final String[] xml = new String[1];
           xml[0] = readContent(getPath("/" + "ashlee.xml"));
           return xml;
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        return null;
+
       }
 
       private Path getPath(final String fileName) {

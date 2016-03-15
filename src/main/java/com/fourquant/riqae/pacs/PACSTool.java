@@ -34,11 +34,14 @@ public final class PACSTool {
   public static final String optPatientNamesFile = "pnf";
   public static final String longOptPatientNamesFile = "patient-names-file";
 
+  public static final String optBinaryPath = "bp";
+  public static final String longOptBinaryPath = "binaryPath";
+
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
   public static void main(final String[] args)
-        throws ParseException, ParserConfigurationException, SAXException, IOException {
+        throws ParseException, ParserConfigurationException, SAXException, IOException, InterruptedException {
 
     final CommandLineProcessor clp = new CommandLineProcessor(args);
     if (!clp.callIsValid()) {
@@ -52,6 +55,7 @@ public final class PACSTool {
     final String outputFile = clp.getOutputFile();
     final String patientNamesFile = clp.getPatientnamesfile();
     final String[] patientNames = clp.getPatientNames();
+    final String binaryPath = clp.getBinaryPath();
 
     final List<DataRow> pacsRequest;
 
@@ -63,11 +67,18 @@ public final class PACSTool {
       throw new IllegalStateException();
     }
 
-    final DefaultPACSFacade pacsFacade = new DefaultPACSFacade(server, port, user);
+    final PACSFacade pacsFacade =
+          new DefaultPACSFacade(server, port, user, binaryPath);
 
+    /*
     pacsFacade.setThirdPartyToolExecutor(
           new DummyThirdPartyToolExecutor(
                 new String[]{"donatella.xml", "kate.xml", "ashlee.xml"}));
+    */
+
+    final ThirdPartyToolExecutor findScuExecutor = new FindScuExecutor();
+
+    pacsFacade.setThirdPartyToolExecutor(findScuExecutor);
 
     final List<DataRow> pacsResponse = pacsFacade.process(pacsRequest);
 
@@ -148,6 +159,10 @@ public final class PACSTool {
 
     public String[] getPatientNames() {
       return line.getOptionValues(optPatientName);
+    }
+
+    public String getBinaryPath() {
+      return line.getOptionValue(optBinaryPath);
     }
 
     public String getPatientnamesfile() {
@@ -243,6 +258,14 @@ public final class PACSTool {
             .required(false)
             .longOpt(longOptOutputFile)
             .desc("Output file name")
+            .build());
+
+      options.addOption(Option.builder(optBinaryPath)
+            .hasArg()
+            .argName("binaryPath")
+            .required(true)
+            .longOpt(longOptBinaryPath)
+            .desc("Binary Path")
             .build());
 
       options.addOption(Option.builder(optHelp)

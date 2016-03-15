@@ -77,7 +77,6 @@ public class CSVDocWriterTest {
         System.out.println(line);
       }
     }
-
   }
 
   @Test(expected = IllegalStateException.class)
