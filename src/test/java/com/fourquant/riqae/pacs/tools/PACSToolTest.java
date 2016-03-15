@@ -81,8 +81,8 @@ public class PACSToolTest {
           "-bp", binaryPath};
 
     PACSTool.main(args);
-    assertTrue(outContent.toString().contains(patientIds[0]));
-    assertTrue(outContent.toString().contains(patientIds[1]));
+    assertTrue(outContent.toString().contains("Rossi Maria Fassula"));
+    assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
   }
 
   @Test
@@ -109,8 +109,8 @@ public class PACSToolTest {
       output += line;
     }
 
-    assertTrue(output.contains(patientIds[0]));
-    assertTrue(output.contains(patientIds[1]));
+    assertTrue(outContent.toString().contains("Rossi Maria Fassula"));
+    assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
   }
 
 

@@ -67,7 +67,6 @@ public final class DefaultPACSFacade implements PACSFacade {
     final List<DataRow> output = new ArrayList<>();
     for (final DataRow inputRow : input) {
 
-
       final String patientName = inputRow.getPatientName();
 
       final FindScuCommandCreator findScuCommandCreator =
