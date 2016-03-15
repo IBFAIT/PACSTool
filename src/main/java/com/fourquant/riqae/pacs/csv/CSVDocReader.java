@@ -54,7 +54,6 @@ public class CSVDocReader {
     final List<DataRow> dataRows = new ArrayList<>();
     for (String patientName : patientNames) {
       final DataRow dataRow = new DataRow();
-      //todo: implement other setters
       dataRow.setPatientName(patientName);
       dataRows.add(dataRow);
     }
