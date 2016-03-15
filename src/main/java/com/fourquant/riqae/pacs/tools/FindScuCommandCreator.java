@@ -49,7 +49,7 @@ public class FindScuCommandCreator {
         final String patientName, final String user,
         final String server, final String port, final String binaryPath) {
     return binaryPath + " -r PatientID -c " + user + "@" + server + ":" + port +
-          " -m PatientName=" + patientName + "";
+          " -m PatientName=" + "\"" + patientName + "\"" + "";
   }
 
   static final class CommandLineProcessor {
