@@ -1,22 +1,10 @@
 package com.fourquant.riqae.pacs.tools;
 
-import org.apache.commons.cli.ParseException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.util.List;
-
-import static com.fourquant.riqae.pacs.TestConstants.*;
-import static java.nio.file.Files.readAllLines;
-import static org.junit.Assert.assertTrue;
 
 public class PACSToolTest {
 
@@ -42,6 +30,8 @@ public class PACSToolTest {
     System.setErr(oldErr);
   }
 
+  /*
+
   @Test
   public void testHelp() throws ParserConfigurationException,
         SAXException, ParseException, IOException, InterruptedException {
@@ -61,7 +51,7 @@ public class PACSToolTest {
           "-s", server,
           "-u", userName,
           "-p", port,
-          "-c", "foo"};
+          "-c", RESOLVE_PATIENT_IDS.toString()};
 
     PACSTool.main(args);
     assertTrue(outContent.toString().contains(patientIds[1]));
@@ -78,7 +68,7 @@ public class PACSToolTest {
           "-s", server,
           "-u", userName,
           "-p", port,
-          "-c", "foo"};
+          "-c", RESOLVE_PATIENT_IDS.toString()};
 
     PACSTool.main(args);
     assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
@@ -95,7 +85,7 @@ public class PACSToolTest {
           "-s", server,
           "-u", userName,
           "-p", port,
-          "-c", "foo",
+          "-c", RESOLVE_PATIENT_IDS.toString(),
           "-output-file", getClass().getResource("/out.csv").getFile()};
 
     PACSTool.main(args);
@@ -112,6 +102,8 @@ public class PACSToolTest {
 
     assertTrue(output.contains("Verdi Anna Fasula"));
   }
+
+*/
 
 /*
   @Test

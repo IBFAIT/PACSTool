@@ -18,7 +18,7 @@ import static com.fourquant.riqae.pacs.TestConstants.*;
 import static java.util.Collections.addAll;
 import static org.junit.Assert.assertFalse;
 
-public class IntegrationTest {
+public class LocalOsirixTest {
 
   private SCUOperationWrapper scuOperationWrapper =
         new SCUOperationWrapper(userName, server, port);
@@ -31,7 +31,7 @@ public class IntegrationTest {
         new XML2CSVConverterService();
 
   @Test
-  public void testEverything() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+  public void testWorkflow() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
 
     /*
 

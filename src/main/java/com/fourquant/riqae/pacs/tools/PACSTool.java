@@ -12,6 +12,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.fourquant.riqae.pacs.tools.Operation.valueOf;
+
 public final class PACSTool {
 
   public static void main(final String[] args)
@@ -33,41 +35,54 @@ public final class PACSTool {
     final String patientNamesFile = commandLineProcessor.getPatientnamesfile();
     final String[] patientNames = commandLineProcessor.getPatientNames();
     final String inputFile = commandLineProcessor.getInputFile();
-    final String command = commandLineProcessor.getCommand();
+    final String commandString = commandLineProcessor.getCommand();
 
-
-    switch (command) {
-      case "a":
-        System.out.println("-> A");
-        break;
-      case "b":
-        System.out.println("-> B");
-        break;
-      case "c":
-        System.out.println("-> C");
-        break;
-    }
-
-    final CSVReaderService csvReaderService = new CSVReaderService();
+    final Operation command = valueOf(commandString);
 
     final SCUOperationWrapper scuOperationWrapper =
           new SCUOperationWrapper(user, server, Integer.toString(port));
 
-    final CSVWriterService csvWriterService = new CSVWriterService();
+
+    switch (command) {
+      case RESOLVE_PATIENT_IDS:
+
+        System.out.println("-> A");
+
+        final CSVReaderService csvReaderService = new CSVReaderService();
+
+        final CSVWriterService csvWriterService = new CSVWriterService();
 
 
-    final Set<CSVDataRow> csvDataRowsInput;
+        final Set<CSVDataRow> csvDataRowsInput;
 
-    if (commandLineProcessor.patientNamesFileSet()) {
-      csvDataRowsInput = csvReaderService.createDataRows(patientNamesFile);
-    } else if (commandLineProcessor.patientNamesSet()) {
-      csvDataRowsInput = csvReaderService.createDataRowsWithNames(patientNames);
-    } else {
-      throw new IllegalStateException();
+        if (commandLineProcessor.patientNamesFileSet()) {
+          csvDataRowsInput = csvReaderService.createDataRows(patientNamesFile);
+        } else if (commandLineProcessor.patientNamesSet()) {
+          csvDataRowsInput = csvReaderService.createDataRowsWithNames(patientNames);
+        } else {
+          throw new IllegalStateException();
+        }
+
+
+        break;
+
+      case RESOLVE_STUDY_INSTANCE_UIDS:
+
+        System.out.println("-> B");
+        break;
+
+      case RESOLVE_SERIES_INSTANCE_UIDS:
+
+        System.out.println("-> C");
+        break;
+
+      case FETCH_SERIES:
+
+        System.out.println("-> D");
+        break;
+
+      default:
+        throw new IllegalStateException();
     }
-
-
   }
-
-
 }

@@ -2,6 +2,7 @@ package com.fourquant.riqae.pacs.tools;
 
 import org.apache.commons.cli.Options;
 
+import static com.fourquant.riqae.pacs.tools.Operation.RESOLVE_PATIENT_IDS;
 import static org.apache.commons.cli.Option.builder;
 
 //todo introduce optiongroups
@@ -33,6 +34,9 @@ public class OptionsFactory {
 
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
+
+  public static final String commandResolvePatientIDs =
+        RESOLVE_PATIENT_IDS.toString();
 
   public static Options createOptions() {
     final Options options = new Options();
