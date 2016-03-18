@@ -28,8 +28,10 @@ public class PACSToolTest {
 
   @Before
   public void setUpStreams() {
+
     oldOut = System.out;
     oldErr = System.err;
+
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
   }
@@ -41,7 +43,7 @@ public class PACSToolTest {
   }
 
   @Test
-  public void testWithBinaryPathOnly() throws ParserConfigurationException,
+  public void testHelp() throws ParserConfigurationException,
         SAXException, ParseException, IOException, InterruptedException {
 
     final String[] args = new String[]{};
@@ -58,11 +60,12 @@ public class PACSToolTest {
           "-patient-name", patientNames[1],
           "-s", server,
           "-u", userName,
-          "-p", port};
+          "-p", port,
+          "-c", "foo"};
 
     PACSTool.main(args);
-    assertTrue(outContent.toString().contains(patientIds[0]));
     assertTrue(outContent.toString().contains(patientIds[1]));
+    assertTrue(outContent.toString().contains(patientIds[0]));
   }
 
   @Test
@@ -74,7 +77,8 @@ public class PACSToolTest {
           getClass().getResource("/osirixNames.csv").getFile(),
           "-s", server,
           "-u", userName,
-          "-p", port};
+          "-p", port,
+          "-c", "foo"};
 
     PACSTool.main(args);
     assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
@@ -91,6 +95,7 @@ public class PACSToolTest {
           "-s", server,
           "-u", userName,
           "-p", port,
+          "-c", "foo",
           "-output-file", getClass().getResource("/out.csv").getFile()};
 
     PACSTool.main(args);

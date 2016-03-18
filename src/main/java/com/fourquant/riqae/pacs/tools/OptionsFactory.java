@@ -1,7 +1,8 @@
 package com.fourquant.riqae.pacs.tools;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+
+import static org.apache.commons.cli.Option.builder;
 
 //todo introduce optiongroups
 public class OptionsFactory {
@@ -24,13 +25,19 @@ public class OptionsFactory {
   public static final String optPatientNamesFile = "pnf";
   public static final String longOptPatientNamesFile = "patient-names-file";
 
+  public static final String optInputFile = "i";
+  public static final String longOptInputFile = "input-file";
+
+  public static final String optCommand = "c";
+  public static final String longOptCommand = "command";
+
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
   public static Options createOptions() {
     final Options options = new Options();
 
-    options.addOption(Option.builder(optServer)
+    options.addOption(builder(optServer)
           .hasArg()
           .argName("ip")
           .required(false)
@@ -38,7 +45,7 @@ public class OptionsFactory {
           .desc("PACS server IP address")
           .build());
 
-    options.addOption(Option.builder(optPort)
+    options.addOption(builder(optPort)
           .hasArg()
           .argName("port")
           .required(false)
@@ -46,7 +53,7 @@ public class OptionsFactory {
           .desc("PACS server port number")
           .build());
 
-    options.addOption(Option.builder(optUser)
+    options.addOption(builder(optUser)
           .hasArg()
           .argName("username")
           .required(false)
@@ -54,7 +61,7 @@ public class OptionsFactory {
           .desc("PACS server user")
           .build());
 
-    options.addOption(Option.builder(optPatientName)
+    options.addOption(builder(optPatientName)
           .hasArg()
           .argName("patientname")
           .required(false)
@@ -62,7 +69,7 @@ public class OptionsFactory {
           .desc("Patient name")
           .build());
 
-    options.addOption(Option.builder(optPatientNamesFile)
+    options.addOption(builder(optPatientNamesFile)
           .hasArg()
           .argName("patientnamesfile")
           .required(false)
@@ -70,7 +77,7 @@ public class OptionsFactory {
           .desc("Patient names file")
           .build());
 
-    options.addOption(Option.builder(optOutputFile)
+    options.addOption(builder(optOutputFile)
           .hasArg()
           .argName("file")
           .required(false)
@@ -78,12 +85,27 @@ public class OptionsFactory {
           .desc("Output file name")
           .build());
 
-    options.addOption(Option.builder(optHelp)
+    options.addOption(builder(optInputFile)
+          .hasArg()
+          .argName("file")
+          .required(false)
+          .longOpt(longOptInputFile)
+          .desc("Input file name")
+          .build());
+
+    options.addOption(builder(optCommand)
+          .hasArg()
+          .argName("command")
+          .required(false)
+          .longOpt(longOptCommand)
+          .desc("Command")
+          .build());
+
+    options.addOption(builder(optHelp)
           .required(false)
           .longOpt(longOptHelp)
           .desc("This help message")
           .build());
     return options;
   }
-
 }
