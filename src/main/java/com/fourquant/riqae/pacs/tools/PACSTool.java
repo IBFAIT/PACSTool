@@ -1,19 +1,16 @@
 package com.fourquant.riqae.pacs.tools;
 
 
-import com.fourquant.riqae.pacs.DefaultPACSFacade;
-import com.fourquant.riqae.pacs.PACSFacade;
-import com.fourquant.riqae.pacs.csv.CSVDocReader;
-import com.fourquant.riqae.pacs.csv.CSVDocWriter;
-import com.fourquant.riqae.pacs.csv.DataRow;
-import com.fourquant.riqae.pacs.executors.FindScuExecutor;
-import com.fourquant.riqae.pacs.executors.ThirdPartyToolExecutor;
+import com.fourquant.riqae.pacs.SCUOperationWrapper;
+import com.fourquant.riqae.pacs.csv.CSVDataRow;
+import com.fourquant.riqae.pacs.csv.CSVReaderService;
+import com.fourquant.riqae.pacs.csv.CSVWriterService;
 import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import static java.lang.Integer.parseInt;
 
@@ -38,40 +35,30 @@ public final class PACSTool {
     final String outputFile = clp.getOutputFile();
     final String patientNamesFile = clp.getPatientnamesfile();
     final String[] patientNames = clp.getPatientNames();
-    final String binaryPath = clp.getBinaryPath();
 
-    final List<DataRow> dataRowsInput;
-    final CSVDocReader csvDocReader = new CSVDocReader();
+    final Set<CSVDataRow> csvDataRowsInput;
+    final CSVReaderService csvReaderService = new CSVReaderService();
 
     if (clp.patientNamesFileSet()) {
-      dataRowsInput = csvDocReader.createDataRows(patientNamesFile);
+      csvDataRowsInput = csvReaderService.createDataRows(patientNamesFile);
     } else if (clp.patientNamesSet()) {
-      dataRowsInput = csvDocReader.createDataRows(patientNames);
+      csvDataRowsInput = csvReaderService.createDataRowsWithNames(patientNames);
     } else {
       throw new IllegalStateException();
     }
 
-    final PACSFacade pacsFacade =
-          new DefaultPACSFacade(server, port, user, binaryPath);
+    final SCUOperationWrapper scuOperationWrapper = new SCUOperationWrapper(null, null, null);
 
-    /*
-    pacsFacade.setThirdPartyToolExecutor(
-          new DummyThirdPartyToolExecutor(
-                new String[]{"donatella.xml", "kate.xml", "ashlee.xml"}));
-    */
 
-    final ThirdPartyToolExecutor findScuExecutor = new FindScuExecutor();
+//    final Set<CSVDataRow> CSVDataRowsOutput = pacsFacade.process(csvDataRowsInput);
 
-    pacsFacade.setThirdPartyToolExecutor(findScuExecutor);
-
-    final List<DataRow> dataRowsOutput = pacsFacade.process(dataRowsInput);
-
-    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+    final CSVWriterService csvWriterService = new CSVWriterService();
 
     if (clp.outputFileSet()) {
-      csvDocWriter.writeDataRows(dataRowsOutput, outputFile);
-    } else
-      csvDocWriter.writeDataRows(dataRowsOutput);
+//      csvWriterService.writeDataRows(CSVDataRowsOutput, outputFile);
+    } else {
+//      csvWriterService.writeDataRows(CSVDataRowsOutput);
+    }
   }
 
   static final class CommandLineProcessor {
@@ -130,10 +117,6 @@ public final class PACSTool {
 
     public String[] getPatientNames() {
       return line.getOptionValues(OptionsFactory.optPatientName);
-    }
-
-    public String getBinaryPath() {
-      return line.getOptionValue(OptionsFactory.optBinaryPath);
     }
 
     public String getPatientnamesfile() {

@@ -1,34 +1,59 @@
 package com.fourquant.riqae.pacs.csv;
 
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import static java.nio.file.FileSystems.getDefault;
 
-public class XML2CSVConverterTest {
+public class XML2CSVConverterServiceTest {
+
+  private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+  private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+
+  private PrintStream oldOut;
+  private PrintStream oldErr;
+
+  @Before
+  public void setUpStreams() {
+    oldOut = System.out;
+    oldErr = System.err;
+    System.setOut(new PrintStream(outContent));
+    System.setErr(new PrintStream(errContent));
+  }
+
+  @After
+  public void cleanUpStreams() {
+    System.setOut(oldOut);
+    System.setErr(oldErr);
+  }
 
   @Test
   public final void testXml2CSVConversion()
         throws IOException, ParserConfigurationException, SAXException {
 
-    final XML2CSVConverter xml2CSVConverter = new XML2CSVConverter();
-    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+    final XML2CSVConverterService xml2CSVConverterService = new XML2CSVConverterService();
+    final CSVWriterService csvWriterService = new CSVWriterService();
 
     final String xml = readContent(getPath("/XML2CSVTest.xml"));
 
-    final List<DataRow> dataRows = xml2CSVConverter.convert(xml);
+    final Set<CSVDataRow> CSVDataRows = xml2CSVConverterService.convert(xml);
 
     final StringBuffer buffer = new StringBuffer();
 
-    csvDocWriter.writeDataRows(dataRows, buffer);
+    csvWriterService.writeDataRows(CSVDataRows, buffer);
 
     final String actual =
           buffer.toString()

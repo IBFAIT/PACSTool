@@ -1,11 +1,6 @@
 package com.fourquant.riqae.pacs.tools;
 
-import com.fourquant.riqae.pacs.DefaultPACSFacade;
-import com.fourquant.riqae.pacs.csv.CSVDocReader;
-import com.fourquant.riqae.pacs.csv.CSVDocWriter;
-import com.fourquant.riqae.pacs.csv.DataRow;
-import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.ParseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,12 +11,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import static com.fourquant.riqae.pacs.TestConstants.*;
-import static org.junit.Assert.assertEquals;
+import static java.nio.file.Files.readAllLines;
 import static org.junit.Assert.assertTrue;
 
 public class PACSToolTest {
@@ -29,23 +23,28 @@ public class PACSToolTest {
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
+  private PrintStream oldOut;
+  private PrintStream oldErr;
+
   @Before
   public void setUpStreams() {
+    oldOut = System.out;
+    oldErr = System.err;
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
   }
 
   @After
   public void cleanUpStreams() {
-    System.setOut(null);
-    System.setErr(null);
+    System.setOut(oldOut);
+    System.setErr(oldErr);
   }
 
   @Test
   public void testWithBinaryPathOnly() throws ParserConfigurationException,
         SAXException, ParseException, IOException, InterruptedException {
 
-    final String[] args = new String[]{"-bp", "xxx"};
+    final String[] args = new String[]{};
     PACSTool.main(args);
     assertTrue(outContent.toString().contains("help"));
   }
@@ -59,14 +58,12 @@ public class PACSToolTest {
           "-patient-name", patientNames[1],
           "-s", server,
           "-u", userName,
-          "-p", port,
-          "-bp", binaryPath};
+          "-p", port};
 
     PACSTool.main(args);
     assertTrue(outContent.toString().contains(patientIds[0]));
     assertTrue(outContent.toString().contains(patientIds[1]));
   }
-
 
   @Test
   public void testWithPatientNameFile() throws ParserConfigurationException,
@@ -77,11 +74,9 @@ public class PACSToolTest {
           getClass().getResource("/osirixNames.csv").getFile(),
           "-s", server,
           "-u", userName,
-          "-p", port,
-          "-bp", binaryPath};
+          "-p", port};
 
     PACSTool.main(args);
-    assertTrue(outContent.toString().contains("Rossi Maria Fassula"));
     assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
   }
 
@@ -96,55 +91,55 @@ public class PACSToolTest {
           "-s", server,
           "-u", userName,
           "-p", port,
-          "-bp", binaryPath,
           "-output-file", getClass().getResource("/out.csv").getFile()};
 
     PACSTool.main(args);
 
     final Path path =
-          FileSystems.getDefault().getPath(getClass().getResource("/out.csv").getPath());
-    final List<String> outputLines = Files.readAllLines(path);
+          FileSystems.getDefault().getPath(
+                getClass().getResource("/out.csv").getPath());
+
+    final List<String> outputLines = readAllLines(path);
     String output = "";
     for (String line : outputLines) {
       output += line;
     }
 
-    assertTrue(outContent.toString().contains("Rossi Maria Fassula"));
-    assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
+    assertTrue(output.contains("Verdi Anna Fasula"));
   }
 
-
+/*
   @Test
   public void testPatientNamesFile() throws ParseException,
-        IOException, InterruptedException {
+        IOException, InterruptedException, ParserConfigurationException, SAXException {
 
     final CommandLineParser parser = new DefaultParser();
     final Options options = OptionsFactory.createOptions();
 
     final String[] args = new String[]{
           "-patient-names-file",
-          getClass().getResource("/names.csv").getFile(), "-bp", "xxx"};
+          getClass().getResource("/names.csv").getFile()};
 
     final CommandLine line;
     line = parser.parse(options, args);
 
     String pnf = line.getOptionValue(OptionsFactory.optPatientNamesFile);
 
-    final CSVDocReader csvDocReader = new CSVDocReader();
+    final CSVReaderService csvDocReader = new CSVReaderService();
 
-    final List<DataRow> request = csvDocReader.createDataRows(pnf);
+    final List<CSVDataRow> request = csvDocReader.createDataRows(pnf);
 
     final DefaultPACSFacade pacsFacade =
-          new DefaultPACSFacade("localhost", 2133, "admin", "xxx");
+          new DefaultPACSFacade("localhost", 2133, "admin");
 
 
     pacsFacade.setThirdPartyToolExecutor(
           new DummyThirdPartyToolExecutor(
                 new String[]{"ashlee.xml"}));
 
-    final List<DataRow> response = pacsFacade.process(request);
+    final List<CSVDataRow> response = pacsFacade.process(request);
 
-    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+    final CSVWriterService csvDocWriter = new CSVWriterService();
 
     csvDocWriter.writeDataRows(response);
 
@@ -164,5 +159,5 @@ public class PACSToolTest {
     assertEquals("hello again", errContent.toString());
   }
 
-
+*/
 }

@@ -24,9 +24,6 @@ public class OptionsFactory {
   public static final String optPatientNamesFile = "pnf";
   public static final String longOptPatientNamesFile = "patient-names-file";
 
-  public static final String optBinaryPath = "bp";
-  public static final String longOptBinaryPath = "binaryPath";
-
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
 
@@ -79,14 +76,6 @@ public class OptionsFactory {
           .required(false)
           .longOpt(longOptOutputFile)
           .desc("Output file name")
-          .build());
-
-    options.addOption(Option.builder(optBinaryPath)
-          .hasArg()
-          .argName("binaryPath")
-          .required(true)
-          .longOpt(longOptBinaryPath)
-          .desc("Binary Path")
           .build());
 
     options.addOption(Option.builder(optHelp)

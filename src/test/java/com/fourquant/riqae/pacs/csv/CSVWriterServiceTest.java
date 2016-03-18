@@ -1,9 +1,5 @@
 package com.fourquant.riqae.pacs.csv;
 
-import com.fourquant.riqae.pacs.DefaultPACSFacade;
-import com.fourquant.riqae.pacs.executors.DummyThirdPartyToolExecutor;
-import com.fourquant.riqae.pacs.tools.OptionsFactory;
-import org.apache.commons.cli.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,91 +7,98 @@ import org.junit.Test;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import static com.fourquant.riqae.pacs.TestConstants.*;
-import static com.fourquant.riqae.pacs.tools.OptionsFactory.optPatientName;
+import static com.fourquant.riqae.pacs.TestConstants.nameAshlee;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CSVDocWriterTest {
+public class CSVWriterServiceTest {
 
   private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
+  private PrintStream oldOut;
+  private PrintStream oldErr;
+
   @Before
   public void setUpStreams() {
+    oldOut = System.out;
+    oldErr = System.err;
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
   }
 
   @After
   public void cleanUpStreams() {
-    System.setOut(null);
-    System.setErr(null);
+    System.setOut(oldOut);
+    System.setErr(oldErr);
   }
 
   @Test
   public void testWrite() throws Exception {
     final String namesFile =
           getClass().
-                getResource("/namesIdsStudyInstanceUIDsAndSeriesInstanceUIDs.csv").
+                getResource("/namesIdsStudyInstanceUIDsAndSerieInstanceUIDs.csv").
                 getFile();
 
-    final CSVDocReader csvDocReader = new CSVDocReader();
-    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+    final CSVReaderService csvReaderService = new CSVReaderService();
+    final CSVWriterService csvWriterService = new CSVWriterService();
 
-    final List<DataRow> dataRows = csvDocReader.createDataRows(namesFile);
-    csvDocWriter.writeDataRows(dataRows);
+    final Set<CSVDataRow> CSVDataRows = csvReaderService.createDataRows(namesFile);
+    csvWriterService.writeDataRows(CSVDataRows);
     assertTrue(
           outContent.toString().
                 contains("Kate Moss;USB000123471;591048351241.9457933;20111231;CT Thorax;591048351241.9457933.5;Series Description;"));
   }
 
+  /*
   @Test
   public void testResponseWriter() throws ParseException, IOException,
-        InterruptedException {
+        InterruptedException, ParserConfigurationException, SAXException {
 
     final CommandLineParser parser = new DefaultParser();
     final Options options = OptionsFactory.createOptions();
 
-    String[] args = new String[]{"-" + optPatientName, nameKate, "-" +
-          OptionsFactory.optBinaryPath, binaryPath};
+    String[] args = new String[]{"-" + optPatientName, nameKate};
 
     final CommandLine line;
     line = parser.parse(options, args);
 
-    final CSVDocReader csvDocReader = new CSVDocReader();
+    final CSVReaderService csvDocReader = new CSVReaderService();
 
-    final List<DataRow> request =
+    final List<CSVDataRow> request =
           csvDocReader.createDataRows(line.getOptionValues(optPatientName));
 
     final DefaultPACSFacade pacsFacade =
-          new DefaultPACSFacade("localhost", 2133, "admin", binaryPath);
+          new DefaultPACSFacade("localhost", 2133, "admin");
 
     pacsFacade.setThirdPartyToolExecutor(
           new DummyThirdPartyToolExecutor(
                 new String[]{"kate.xml"}));
 
-    final List<DataRow> response = pacsFacade.process(request);
+    final List<CSVDataRow> response = pacsFacade.process(request);
 
-    final CSVDocWriter csvDocWriter = new CSVDocWriter();
+    final CSVWriterService csvDocWriter = new CSVWriterService();
     csvDocWriter.writeDataRows(response);
 
     final String out = outContent.toString();
     assertTrue(out.contains(nameKate));
   }
 
+*/
+
   @Test
   public void testWriteToBuffer() throws Exception {
-    final CSVDocWriter writer = new CSVDocWriter();
-    final List<DataRow> dataRows = new ArrayList<>();
-    final DataRow dataRow = new DataRow();
-    dataRow.setPatientName(nameAshlee);
+    final CSVWriterService writer = new CSVWriterService();
+    final List<CSVDataRow> CSVDataRows = new ArrayList<>();
+    final CSVDataRow CSVDataRow = new CSVDataRow();
+    CSVDataRow.setPatientName(nameAshlee);
     final StringBuffer buffer = new StringBuffer();
 
-    dataRows.add(dataRow);
+    CSVDataRows.add(CSVDataRow);
 
-    writer.writeDataRows(dataRows, buffer);
+    writer.writeDataRows(CSVDataRows, buffer);
 
     assertTrue(buffer.toString().contains(nameAshlee));
   }
@@ -105,9 +108,9 @@ public class CSVDocWriterTest {
     final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     System.setOut(new PrintStream(outContent));
 
-    final CSVDocWriter writer = new CSVDocWriter();
-    final List<DataRow> dataRows = new ArrayList<>();
-    writer.writeDataRows(dataRows);
+    final CSVWriterService writer = new CSVWriterService();
+    final List<CSVDataRow> CSVDataRows = new ArrayList<>();
+    writer.writeDataRows(CSVDataRows);
 
     final String header =
           "Patient Name;Patient ID;Study Instance UID;Study Date;Study Description;Series Instance UID;Series Description;Result";
@@ -118,10 +121,10 @@ public class CSVDocWriterTest {
 
   @Test
   public void testWriteToFile() throws Exception {
-    final CSVDocReader csvDocReader = new CSVDocReader();
+    final CSVReaderService csvReaderService = new CSVReaderService();
 
-    final List<DataRow> dataRows =
-          csvDocReader.createDataRows(getClass().
+    final Set<CSVDataRow> csvDataRows =
+          csvReaderService.createDataRows(getClass().
                 getResource("/names.csv").getFile());
 
     try (BufferedReader br =
@@ -135,11 +138,11 @@ public class CSVDocWriterTest {
       }
     }
 
-    final CSVDocWriter writer = new CSVDocWriter();
+    final CSVWriterService writer = new CSVWriterService();
 
     final String file = getClass().getResource("/dummy.csv").getFile();
 
-    writer.writeDataRows(dataRows, file);
+    writer.writeDataRows(csvDataRows, file);
 
     try (BufferedReader br = new BufferedReader(new FileReader(file))) {
       String line;
@@ -149,9 +152,9 @@ public class CSVDocWriterTest {
     }
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test(expected = FileNotFoundException.class)
   public void testWriteWithException() throws Exception {
-    final CSVDocWriter writer = new CSVDocWriter();
+    final CSVWriterService writer = new CSVWriterService();
     writer.writeDataRows(new ArrayList<>(), "/does/not/exist");
   }
 }
