@@ -1,10 +1,24 @@
 package com.fourquant.riqae.pacs.tools;
 
+import com.fourquant.riqae.pacs.LoggingFunctionException;
+import org.apache.commons.cli.ParseException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static com.fourquant.riqae.pacs.TestConstants.*;
+import static com.fourquant.riqae.pacs.tools.Operation.*;
+import static java.nio.file.Files.readAllBytes;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PACSToolTest {
 
@@ -30,11 +44,10 @@ public class PACSToolTest {
     System.setErr(oldErr);
   }
 
-  /*
-
   @Test
   public void testHelp() throws ParserConfigurationException,
-        SAXException, ParseException, IOException, InterruptedException {
+        SAXException, ParseException, IOException, InterruptedException,
+        LoggingFunctionException {
 
     final String[] args = new String[]{};
     PACSTool.main(args);
@@ -42,107 +55,112 @@ public class PACSToolTest {
   }
 
   @Test
-  public void testWithPatientNames() throws ParserConfigurationException,
-        SAXException, ParseException, IOException, InterruptedException {
-
-    final String[] args = new String[]{
-          "-patient-name", patientNames[0],
-          "-patient-name", patientNames[1],
-          "-s", server,
-          "-u", userName,
-          "-p", port,
-          "-c", RESOLVE_PATIENT_IDS.toString()};
-
-    PACSTool.main(args);
-    assertTrue(outContent.toString().contains(patientIds[1]));
-    assertTrue(outContent.toString().contains(patientIds[0]));
-  }
-
-  @Test
-  public void testWithPatientNameFile() throws ParserConfigurationException,
-        SAXException, ParseException, IOException, InterruptedException {
-
-    final String[] args = new String[]{
-          "-patient-names-file",
-          getClass().getResource("/osirixNames.csv").getFile(),
-          "-s", server,
-          "-u", userName,
-          "-p", port,
-          "-c", RESOLVE_PATIENT_IDS.toString()};
-
-    PACSTool.main(args);
-    assertTrue(outContent.toString().contains("Verdi Anna Fasula"));
-  }
-
-  @Test
-  public void testWithPatientNameFileAndOutputFile()
+  public void testResolvePatientIDsByCmdParams()
         throws ParserConfigurationException, SAXException, ParseException,
-        IOException, InterruptedException {
+        IOException, InterruptedException, LoggingFunctionException {
+
+    final Path outputFile = Files.createTempFile("tmp", ".csv");
 
     final String[] args = new String[]{
-          "-patient-names-file",
-          getClass().getResource("/osirixNames.csv").getFile(),
+          "-patient-name", nameAnna,
+          "-patient-name", nameMario,
           "-s", server,
           "-u", userName,
           "-p", port,
           "-c", RESOLVE_PATIENT_IDS.toString(),
-          "-output-file", getClass().getResource("/out.csv").getFile()};
+          "-o", outputFile.toAbsolutePath().toString()};
 
     PACSTool.main(args);
 
-    final Path path =
-          FileSystems.getDefault().getPath(
-                getClass().getResource("/out.csv").getPath());
+    assertTrue(
+          new String(
+                readAllBytes(outputFile)).
+                contains(getCSVDataRow(nameAnna).getPatientID()));
 
-    final List<String> outputLines = readAllLines(path);
-    String output = "";
-    for (String line : outputLines) {
-      output += line;
-    }
+    assertTrue(
+          new String(
+                readAllBytes(outputFile)).
+                contains(getCSVDataRow(nameMario).getPatientID()));
 
-    assertTrue(output.contains("Verdi Anna Fasula"));
   }
 
-*/
-
-/*
   @Test
-  public void testPatientNamesFile() throws ParseException,
-        IOException, InterruptedException, ParserConfigurationException, SAXException {
-
-    final CommandLineParser parser = new DefaultParser();
-    final Options options = OptionsFactory.createOptions();
+  public void testResolvePatientIDsByFile() throws ParserConfigurationException,
+        SAXException, ParseException, IOException, InterruptedException,
+        LoggingFunctionException {
 
     final String[] args = new String[]{
-          "-patient-names-file",
-          getClass().getResource("/names.csv").getFile()};
+          "-input-file",
+          getClass().getResource("/osirixNames.csv").getFile(),
+          "-s", server,
+          "-u", userName,
+          "-p", port,
+          "-c", RESOLVE_PATIENT_IDS.toString()};
 
-    final CommandLine line;
-    line = parser.parse(options, args);
+    PACSTool.main(args);
 
-    String pnf = line.getOptionValue(OptionsFactory.optPatientNamesFile);
-
-    final CSVReaderService csvDocReader = new CSVReaderService();
-
-    final List<CSVDataRow> request = csvDocReader.createDataRows(pnf);
-
-    final DefaultPACSFacade pacsFacade =
-          new DefaultPACSFacade("localhost", 2133, "admin");
-
-
-    pacsFacade.setThirdPartyToolExecutor(
-          new DummyThirdPartyToolExecutor(
-                new String[]{"ashlee.xml"}));
-
-    final List<CSVDataRow> response = pacsFacade.process(request);
-
-    final CSVWriterService csvDocWriter = new CSVWriterService();
-
-    csvDocWriter.writeDataRows(response);
-
-    final String out = outContent.toString();
-    assertTrue(out.contains("Ashlee Simpson"));
+    assertTrue(outContent.toString().contains(nameAnna));
+    assertTrue(outContent.toString().contains(getCSVDataRow(nameAnna).getPatientID()));
   }
+
+  @Test
+  public void testResolveStudyInstanceUIDs() throws ParserConfigurationException,
+        SAXException, ParseException, IOException, InterruptedException,
+        LoggingFunctionException {
+
+    final String[] args = new String[]{
+          "-input-file",
+          getClass().getResource("/osirixNamesAndIds.csv").getFile(),
+          "-s", server,
+          "-u", userName,
+          "-p", port,
+          "-c", RESOLVE_STUDY_INSTANCE_UIDS.toString()};
+
+    PACSTool.main(args);
+
+    assertTrue(
+          outContent.toString().contains(nameAnna));
+
+    assertTrue(
+          outContent.toString().contains(
+                getCSVDataRow(nameAnna).getPatientID()));
+
+    assertTrue(
+          outContent.toString().contains(
+                getCSVDataRow(nameAnna).getStudyInstanceUID()));
+  }
+
+  @Test
+  public void testResolveSeriesInstanceUIDs() throws ParserConfigurationException,
+        SAXException, ParseException, IOException, InterruptedException,
+        LoggingFunctionException {
+
+    final String[] args = new String[]{
+          "-input-file",
+          getClass().getResource("/osirixNamesIdsAndStudyInstanceUIDs.csv").getFile(),
+          "-s", server,
+          "-u", userName,
+          "-p", port,
+          "-c", RESOLVE_SERIES_INSTANCE_UIDS.toString()};
+
+    PACSTool.main(args);
+
+    assertTrue(
+          outContent.toString().contains(nameAnna));
+
+    assertTrue(
+          outContent.toString().contains(
+                getCSVDataRow(nameAnna).getPatientID()));
+
+    assertTrue(
+          outContent.toString().contains(
+                getCSVDataRow(nameAnna).getStudyInstanceUID()));
+
+    assertTrue(
+          outContent.toString().contains(
+                getCSVDataRow(nameAnna).getSeriesInstanceUID()));
+  }
+
 
   @Test
   public void testOut() {
@@ -156,5 +174,4 @@ public class PACSToolTest {
     assertEquals("hello again", errContent.toString());
   }
 
-*/
 }

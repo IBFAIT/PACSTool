@@ -41,8 +41,8 @@ public class CSVReaderServiceTest {
     final CSVReaderService csvReaderService = new CSVReaderService();
 
     final Set<String> patientNames = new HashSet<String>() {{
-      add(nameDonatella);
-      add(nameKate);
+      add(nameAnna);
+      add(nameMario);
     }};
 
     final Set<CSVDataRow> csvDataRows =
@@ -51,8 +51,8 @@ public class CSVReaderServiceTest {
     final Iterator<CSVDataRow> iterator = csvDataRows.iterator();
     final CSVDataRow csvDataRow = iterator.next();
 
-    assertEquals(nameDonatella, csvDataRow.getPatientName());
-    assertEquals(nameKate, iterator.next().getPatientName());
+    assertEquals(nameAnna, csvDataRow.getPatientName());
+    assertEquals(nameMario, iterator.next().getPatientName());
   }
 
   @Test

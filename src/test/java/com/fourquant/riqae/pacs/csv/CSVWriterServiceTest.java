@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.fourquant.riqae.pacs.TestConstants.nameAshlee;
+import static com.fourquant.riqae.pacs.TestConstants.nameMario;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -93,14 +93,14 @@ public class CSVWriterServiceTest {
     final CSVWriterService writer = new CSVWriterService();
     final List<CSVDataRow> CSVDataRows = new ArrayList<>();
     final CSVDataRow CSVDataRow = new CSVDataRow();
-    CSVDataRow.setPatientName(nameAshlee);
+    CSVDataRow.setPatientName(nameMario);
     final StringBuffer buffer = new StringBuffer();
 
     CSVDataRows.add(CSVDataRow);
 
     writer.writeDataRows(CSVDataRows, buffer);
 
-    assertTrue(buffer.toString().contains(nameAshlee));
+    assertTrue(buffer.toString().contains(nameMario));
   }
 
   @Test

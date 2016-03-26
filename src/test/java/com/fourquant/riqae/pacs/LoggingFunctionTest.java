@@ -60,7 +60,7 @@ public class LoggingFunctionTest {
 
     System.out.println("result = " + result);
 
-    Thread.sleep(1000);
+    Thread.sleep(2000);
   }
 
 }

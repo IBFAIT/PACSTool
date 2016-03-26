@@ -2,6 +2,7 @@ package com.fourquant.riqae.pacs.tools;
 
 
 import com.fourquant.riqae.pacs.Dcm4CheWrapper;
+import com.fourquant.riqae.pacs.LoggingFunctionException;
 import com.fourquant.riqae.pacs.csv.CSVDataRow;
 import com.fourquant.riqae.pacs.csv.CSVReaderService;
 import com.fourquant.riqae.pacs.csv.CSVWriterService;
@@ -12,13 +13,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Set;
 
-import static com.fourquant.riqae.pacs.tools.Operation.valueOf;
+import static com.fourquant.riqae.pacs.tools.Operation.*;
+import static java.lang.System.out;
 
 public final class PACSTool {
 
+  final static CSVReaderService csvReaderService = new CSVReaderService();
+
+  final static CSVWriterService csvWriterService = new CSVWriterService();
+
   public static void main(final String[] args)
         throws ParseException, ParserConfigurationException,
-        SAXException, IOException, InterruptedException {
+        SAXException, IOException, InterruptedException,
+        LoggingFunctionException {
 
     final CommandLineProcessor commandLineProcessor =
           new CommandLineProcessor(args);
@@ -32,7 +39,6 @@ public final class PACSTool {
     final int port = commandLineProcessor.getPort();
     final String user = commandLineProcessor.getUser();
     final String outputFile = commandLineProcessor.getOutputFile();
-    final String patientNamesFile = commandLineProcessor.getPatientnamesfile();
     final String[] patientNames = commandLineProcessor.getPatientNames();
     final String inputFile = commandLineProcessor.getInputFile();
     final String commandString = commandLineProcessor.getCommand();
@@ -42,43 +48,61 @@ public final class PACSTool {
     final Dcm4CheWrapper dcm4CheWrapper =
           new Dcm4CheWrapper(user, server, Integer.toString(port));
 
-
     switch (command) {
       case RESOLVE_PATIENT_IDS:
 
-        System.out.println("-> A");
-
-        final CSVReaderService csvReaderService = new CSVReaderService();
-
-        final CSVWriterService csvWriterService = new CSVWriterService();
-
-
         final Set<CSVDataRow> csvDataRowsInput;
 
-        if (commandLineProcessor.patientNamesFileSet()) {
-          csvDataRowsInput = csvReaderService.createDataRows(patientNamesFile);
+        if (commandLineProcessor.inputFileSet()) {
+
+          csvDataRowsInput = csvReaderService.createDataRows(inputFile);
+
         } else if (commandLineProcessor.patientNamesSet()) {
+
           csvDataRowsInput = csvReaderService.createDataRowsWithNames(patientNames);
+
         } else {
           throw new IllegalStateException();
         }
 
+        final Set<CSVDataRow> nameAndIdDataRows =
+              dcm4CheWrapper.execute(RESOLVE_PATIENT_IDS).on(csvDataRowsInput);
+
+        if (commandLineProcessor.outputFileSet())
+          csvWriterService.writeCSVFile(nameAndIdDataRows, outputFile);
+        else
+          csvWriterService.writeDataRows(nameAndIdDataRows, out);
 
         break;
 
       case RESOLVE_STUDY_INSTANCE_UIDS:
 
-        System.out.println("-> B");
+        csvDataRowsInput = csvReaderService.createDataRows(inputFile);
+
+        final Set<CSVDataRow> studyInstanceUIDDataRows =
+              dcm4CheWrapper.execute(RESOLVE_STUDY_INSTANCE_UIDS).
+                    on(csvDataRowsInput);
+
+        if (commandLineProcessor.outputFileSet())
+          csvWriterService.writeCSVFile(studyInstanceUIDDataRows, outputFile);
+        else
+          csvWriterService.writeDataRows(studyInstanceUIDDataRows, out);
+
         break;
 
       case RESOLVE_SERIES_INSTANCE_UIDS:
 
-        System.out.println("-> C");
-        break;
+        csvDataRowsInput = csvReaderService.createDataRows(inputFile);
 
-      case FETCH_SERIES:
+        final Set<CSVDataRow> seriesInstanceUIDDataRows =
+              dcm4CheWrapper.execute(RESOLVE_SERIES_INSTANCE_UIDS).
+                    on(csvDataRowsInput);
 
-        System.out.println("-> D");
+        if (commandLineProcessor.outputFileSet())
+          csvWriterService.writeCSVFile(seriesInstanceUIDDataRows, outputFile);
+        else
+          csvWriterService.writeDataRows(seriesInstanceUIDDataRows, out);
+
         break;
 
       default:

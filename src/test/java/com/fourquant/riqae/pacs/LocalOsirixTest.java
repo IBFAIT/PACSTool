@@ -3,6 +3,8 @@ package com.fourquant.riqae.pacs;
 import com.fourquant.riqae.pacs.csv.CSVDataRow;
 import com.fourquant.riqae.pacs.csv.CSVReaderService;
 import com.fourquant.riqae.pacs.csv.CSVWriterService;
+import org.dcm4che3.tool.dcm2jpg.Dcm2Jpg;
+import org.dcm4che3.tool.dcm2xml.Dcm2Xml;
 import org.junit.Test;
 
 import java.io.File;
@@ -163,21 +165,47 @@ public class LocalOsirixTest {
       13. Fetch images
      */
 
-    final Set<File> imageFiles = fetchSeries(seriesIdDataRows);
+    final Set<File> dicomImageFiles = fetchSeries(seriesIdDataRows);
 
-    for (final File file : imageFiles) {
-      System.out.println("file = " + file);
+    int counter = 0;
+    for (final File dicomImageFile : dicomImageFiles) {
+      System.out.println("dicomImageFile = " + dicomImageFile);
+
+      if (counter++ > 5)
+        break;
     }
 
-//    todo: dcm2jpg laufen lassen...
+    /*
+      14. Demonstrate dcm2xml
+     */
 
+    counter = 0;
+    for (final File dicomImageFile : dicomImageFiles) {
+
+      Dcm2Xml.main(
+            new String[]{
+                  dicomImageFile.getAbsolutePath()});
+
+      if (counter++ > 5)
+        break;
+    }
 
     /*
-      14. Have RIQAE process the images
-    */
+      15. Demonstrate dcm2jpg
+     */
+
+    counter = 0;
+    for (final File dicomImageFile : dicomImageFiles) {
+
+      Dcm2Jpg.main(new String[]{
+            dicomImageFile.getAbsolutePath(), dicomImageFile.getAbsolutePath() + ".jpg"});
+
+      if (counter++ > 5)
+        break;
+    }
 
     /*
-      15. Clean up
+      16. Clean up
     */
 
     new File(tmpDirectoryNamesAndIds.toUri()).deleteOnExit();

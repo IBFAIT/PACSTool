@@ -59,21 +59,16 @@ public final class CommandLineProcessor {
     return user;
   }
 
-  private boolean inputFileSet() {
+  public boolean inputFileSet() {
     return line.hasOption(optInputFile);
   }
 
-  private boolean outputFileSet() {
+  public boolean outputFileSet() {
     return line.hasOption(optOutputFile);
   }
 
   private boolean isHelp() {
     return line.hasOption(optHelp);
-  }
-
-  private boolean hasPatientNames() {
-    return line.hasOption(
-          optPatientName) || line.hasOption(optPatientNamesFile);
   }
 
   private boolean hasCommand() {
@@ -82,10 +77,6 @@ public final class CommandLineProcessor {
 
   public String[] getPatientNames() {
     return line.getOptionValues(optPatientName);
-  }
-
-  public String getPatientnamesfile() {
-    return line.getOptionValue(optPatientNamesFile);
   }
 
   public String getInputFile() {
@@ -105,16 +96,12 @@ public final class CommandLineProcessor {
   }
 
   public boolean callIsValid() {
-    return !isHelp() && hasPatientNames() && hasCommand();
+    return !isHelp() && hasCommand();
   }
 
   public void printHelp() {
     new HelpFormatter().
           printHelp("PACSTool", options);
-  }
-
-  public boolean patientNamesFileSet() {
-    return line.hasOption(optPatientNamesFile);
   }
 
   public boolean patientNamesSet() {

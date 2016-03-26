@@ -51,7 +51,7 @@ public class Dcm4CheWrapperHelper {
 
   }
 
-  static File createTempDirectory() throws IOException {
+  public static File createTempDirectory() throws IOException {
 
     final Path tempDirectory =
           java.nio.file.Files.createTempDirectory("integrationTest-temp-");
@@ -60,7 +60,7 @@ public class Dcm4CheWrapperHelper {
 
   }
 
-  static void deleteOnExit(final File file) {
+  public static void deleteOnExit(final File file) {
 
     file.deleteOnExit();
   }

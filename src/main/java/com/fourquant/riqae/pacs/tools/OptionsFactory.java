@@ -22,9 +22,6 @@ public class OptionsFactory {
   public static final String optPatientName = "pn";
   public static final String longOptPatientName = "patient-name";
 
-  public static final String optPatientNamesFile = "pnf";
-  public static final String longOptPatientNamesFile = "patient-names-file";
-
   public static final String optInputFile = "i";
   public static final String longOptInputFile = "input-file";
 
@@ -70,14 +67,6 @@ public class OptionsFactory {
           .required(false)
           .longOpt(longOptPatientName)
           .desc("Patient name")
-          .build());
-
-    options.addOption(builder(optPatientNamesFile)
-          .hasArg()
-          .argName("patientnamesfile")
-          .required(false)
-          .longOpt(longOptPatientNamesFile)
-          .desc("Patient names file")
           .build());
 
     options.addOption(builder(optOutputFile)

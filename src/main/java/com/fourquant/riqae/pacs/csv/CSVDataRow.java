@@ -14,7 +14,7 @@ public class CSVDataRow {
     return patientName;
   }
 
-  final void setPatientName(String patientName) {
+  public final void setPatientName(String patientName) {
     this.patientName = patientName;
   }
 
@@ -22,7 +22,7 @@ public class CSVDataRow {
     return patientID;
   }
 
-  final void setPatientID(final String patientID) {
+  public final void setPatientID(final String patientID) {
     this.patientID = patientID;
   }
 
@@ -30,7 +30,7 @@ public class CSVDataRow {
     return studyInstanceUID;
   }
 
-  final void setStudyInstanceUID(final String studyInstanceUID) {
+  public final void setStudyInstanceUID(final String studyInstanceUID) {
     this.studyInstanceUID = studyInstanceUID;
   }
 
@@ -38,7 +38,7 @@ public class CSVDataRow {
     return seriesInstanceUID;
   }
 
-  final void setSeriesInstanceUID(final String seriesInstanceUID) {
+  public final void setSeriesInstanceUID(final String seriesInstanceUID) {
     this.seriesInstanceUID = seriesInstanceUID;
   }
 

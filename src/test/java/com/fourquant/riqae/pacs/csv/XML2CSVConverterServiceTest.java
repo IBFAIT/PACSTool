@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.convert;
 import static java.nio.file.FileSystems.getDefault;
 
 public class XML2CSVConverterServiceTest {
@@ -44,12 +45,11 @@ public class XML2CSVConverterServiceTest {
   public final void testXml2CSVConversion()
         throws IOException, ParserConfigurationException, SAXException {
 
-    final XML2CSVConverterService xml2CSVConverterService = new XML2CSVConverterService();
     final CSVWriterService csvWriterService = new CSVWriterService();
 
     final String xml = readContent(getPath("/XML2CSVTest.xml"));
 
-    final Set<CSVDataRow> CSVDataRows = xml2CSVConverterService.convert(xml);
+    final Set<CSVDataRow> CSVDataRows = convert(xml);
 
     final StringBuffer buffer = new StringBuffer();
 
