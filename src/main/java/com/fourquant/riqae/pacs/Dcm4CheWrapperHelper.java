@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import static java.nio.file.Files.readAllBytes;
 
-public class SCUOperationWrapperHelper {
+public class Dcm4CheWrapperHelper {
 
   static FileFilter dcmFilter() {
     return pathname -> pathname.getName().endsWith(".dcm");

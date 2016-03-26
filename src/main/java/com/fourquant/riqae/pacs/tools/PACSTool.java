@@ -1,7 +1,7 @@
 package com.fourquant.riqae.pacs.tools;
 
 
-import com.fourquant.riqae.pacs.SCUOperationWrapper;
+import com.fourquant.riqae.pacs.Dcm4CheWrapper;
 import com.fourquant.riqae.pacs.csv.CSVDataRow;
 import com.fourquant.riqae.pacs.csv.CSVReaderService;
 import com.fourquant.riqae.pacs.csv.CSVWriterService;
@@ -39,8 +39,8 @@ public final class PACSTool {
 
     final Operation command = valueOf(commandString);
 
-    final SCUOperationWrapper scuOperationWrapper =
-          new SCUOperationWrapper(user, server, Integer.toString(port));
+    final Dcm4CheWrapper dcm4CheWrapper =
+          new Dcm4CheWrapper(user, server, Integer.toString(port));
 
 
     switch (command) {

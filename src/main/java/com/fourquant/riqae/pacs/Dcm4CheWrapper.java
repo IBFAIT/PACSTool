@@ -15,22 +15,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static com.fourquant.riqae.pacs.SCUOperationWrapperHelper.*;
+import static com.fourquant.riqae.pacs.Dcm4CheWrapperHelper.*;
 import static com.fourquant.riqae.pacs.csv.CSVProtocol.*;
 import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.createCSVDataRows;
 import static com.fourquant.riqae.pacs.tools.Operation.FETCH_SERIES;
 
-public final class SCUOperationWrapper {
+public final class Dcm4CheWrapper {
 
   private static final Logger log =
-        Logger.getLogger(SCUOperationWrapper.class.getName());
+        Logger.getLogger(Dcm4CheWrapper.class.getName());
 
   final String userName;
   final String server;
   final String port;
 
-  public SCUOperationWrapper(final String userName, final String server,
-                             final String port) {
+  public Dcm4CheWrapper(final String userName, final String server,
+                        final String port) {
 
     this.userName = userName;
     this.server = server;
@@ -48,6 +48,7 @@ public final class SCUOperationWrapper {
     final File[] files;
 
     files = executeGetSCU(tempDirectory, scuArguments);
+
 
     deleteOnExit(tempDirectory);
 

@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.fourquant.riqae.pacs.SCUOperationWrapperHelper.createTempDirectory;
+import static com.fourquant.riqae.pacs.Dcm4CheWrapperHelper.createTempDirectory;
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static com.fourquant.riqae.pacs.tools.Operation.*;
 import static java.util.Collections.addAll;
@@ -19,8 +19,8 @@ import static org.junit.Assert.assertFalse;
 
 public class LocalOsirixTest {
 
-  private SCUOperationWrapper scuOperationWrapper =
-        new SCUOperationWrapper(userName, server, port);
+  private Dcm4CheWrapper dcm4CheWrapper =
+        new Dcm4CheWrapper(userName, server, port);
 
   private CSVReaderService csvReaderService = new CSVReaderService();
 
@@ -76,7 +76,7 @@ public class LocalOsirixTest {
      */
 
     final Set<CSVDataRow> nameAndIdDataRows =
-          scuOperationWrapper.execute(RESOLVE_PATIENT_IDS).on(namesDataRows);
+          dcm4CheWrapper.execute(RESOLVE_PATIENT_IDS).on(namesDataRows);
 
     /*
       3. Write csv file with PatientNames and PatientIDs -> namesAndIds.csv
@@ -103,7 +103,7 @@ public class LocalOsirixTest {
       6. Resolve PatientIds to StudyInstanceUIDs
      */
     final Set<CSVDataRow> studyIdDataRows =
-          scuOperationWrapper.execute(RESOLVE_STUDY_INSTANCE_UIDS).
+          dcm4CheWrapper.execute(RESOLVE_STUDY_INSTANCE_UIDS).
                 on(editedNameAndIdDataRows);
 
     for (final CSVDataRow csvDataRow : studyIdDataRows) {
@@ -136,7 +136,7 @@ public class LocalOsirixTest {
       10. Resolve StudyInstanceUIDs to SeriesInstanceUIDs
      */
     final Set<CSVDataRow> seriesIdDataRows =
-          scuOperationWrapper.execute(RESOLVE_SERIES_INSTANCE_UIDS).
+          dcm4CheWrapper.execute(RESOLVE_SERIES_INSTANCE_UIDS).
                 on(editedStudyIdDataRows);
 
     for (final CSVDataRow csvDataRow : seriesIdDataRows) {
@@ -196,7 +196,7 @@ public class LocalOsirixTest {
     for (final CSVDataRow csvDataRow : seriesIDDataRows) {
 
       final File[] fileResults =
-            scuOperationWrapper.fetchSeries(
+            dcm4CheWrapper.fetchSeries(
                   csvDataRow.getSeriesInstanceUID());
 
       addAll(files, fileResults);
