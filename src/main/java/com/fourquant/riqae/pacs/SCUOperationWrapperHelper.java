@@ -13,13 +13,18 @@ public class SCUOperationWrapperHelper {
     return pathname -> pathname.getName().endsWith(".dcm");
   }
 
-  static String[] readFiles(final Path directory) throws IOException {
+  static FileFilter all() {
+    return pathname -> true;
+  }
+
+  static String[] readFiles(final Path directory, final FileFilter fileFilter)
+        throws IOException {
 
     final File directoryFile = directory.toFile();
 
     final File[] dcmFiles = (
           directoryFile.listFiles(
-                dcmFilter()));
+                fileFilter));
 
     final String[] xmlContents = new String[dcmFiles.length];
 
@@ -38,6 +43,12 @@ public class SCUOperationWrapperHelper {
     }
 
     return xmlContents;
+  }
+
+  static String[] readFiles(final Path directory) throws IOException {
+
+    return readFiles(directory, all());
+
   }
 
   static File createTempDirectory() throws IOException {

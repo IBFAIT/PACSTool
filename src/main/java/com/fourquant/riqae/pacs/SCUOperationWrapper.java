@@ -55,11 +55,26 @@ public final class SCUOperationWrapper {
 
   }
 
-  private String[] executeFindSCU(final File tempDirectory,
-                                  final String... command)
-        throws IOException, LoggingFunctionException {
+  private void execute(final Method method,
+                       final String... command) throws LoggingFunctionException {
 
-    return executeFindSCU(tempDirectory.toPath(), command);
+    final Object[] args = {command};
+
+    final LoggingFunction loggingFunction = new LoggingFunction();
+
+    final Float duration = loggingFunction.execute(method, args);
+
+    final StringBuilder stringBuilder = new StringBuilder();
+    for (final String cmd : command) {
+      stringBuilder.append(cmd);
+      stringBuilder.append(" ");
+    }
+
+    log.info(
+          "executing " + method.getName() + " on " +
+                method.getDeclaringClass().getName() + " with args " +
+                stringBuilder.toString() + " took " + duration);
+
   }
 
   private String[] executeFindSCU(final Path tempDirectory,
@@ -72,24 +87,9 @@ public final class SCUOperationWrapper {
 
       method = FindSCU.class.getMethod("main", String[].class);
 
-      final Object[] args = {command};
+      execute(method, command);
 
-      final LoggingFunction loggingFunction = new LoggingFunction();
-
-      final Float duration = loggingFunction.execute(method, args);
-
-      final StringBuilder stringBuilder = new StringBuilder();
-      for (final String cmd : command) {
-        stringBuilder.append(cmd);
-        stringBuilder.append(" ");
-      }
-
-      log.info(
-            "executing " + method.getName() + " on " + FindSCU.class.getName() +
-                  " with args " + stringBuilder.toString() + " took " + duration);
-
-      return readFiles(tempDirectory);
-
+      return readFiles(tempDirectory, dcmFilter());
 
     } catch (NoSuchMethodException e) {
       throw new LoggingFunctionException(e);
@@ -106,21 +106,7 @@ public final class SCUOperationWrapper {
 
       method = GetSCU.class.getMethod("main", String[].class);
 
-      final Object[] args = {command};
-
-      final LoggingFunction loggingFunction = new LoggingFunction();
-
-      final Float duration = loggingFunction.execute(method, args);
-
-      final StringBuilder stringBuilder = new StringBuilder();
-      for (final String cmd : command) {
-        stringBuilder.append(cmd);
-        stringBuilder.append(" ");
-      }
-
-      log.info(
-            "executing " + method.getName() + " on " + GetSCU.class.getName() +
-                  " with args " + stringBuilder.toString() + " took " + duration);
+      execute(method, command);
 
       final File[] outFileList = (
             tempDirectory.listFiles());
@@ -205,7 +191,7 @@ public final class SCUOperationWrapper {
   public class ExecutionWrapper {
     private Operation operation;
 
-    public ExecutionWrapper(Operation operation) {
+    public ExecutionWrapper(final Operation operation) {
       this.operation = operation;
     }
 
@@ -218,7 +204,7 @@ public final class SCUOperationWrapper {
             argument, tempDirectory, operation);
 
       final String[] xmlResults =
-            executeFindSCU(tempDirectory, arguments);
+            executeFindSCU(tempDirectory.toPath(), arguments);
 
       deleteOnExit(tempDirectory);
 
@@ -237,7 +223,7 @@ public final class SCUOperationWrapper {
 
           final String id;
 
-          switch (operation){
+          switch (operation) {
             case RESOLVE_PATIENT_IDS:
 
               id = row.getPatientName();
