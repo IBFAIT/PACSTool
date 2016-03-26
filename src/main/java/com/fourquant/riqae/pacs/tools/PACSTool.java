@@ -18,9 +18,9 @@ import static java.lang.System.out;
 
 public final class PACSTool {
 
-  final static CSVReaderService csvReaderService = new CSVReaderService();
+  private final static CSVReaderService csvReaderService = new CSVReaderService();
 
-  final static CSVWriterService csvWriterService = new CSVWriterService();
+  private final static CSVWriterService csvWriterService = new CSVWriterService();
 
   public static void main(final String[] args)
         throws ParseException, ParserConfigurationException,
