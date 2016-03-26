@@ -1,19 +1,24 @@
 package com.fourquant.riqae.pacs;
 
+import com.fourquant.riqae.pacs.csv.CSVDataRow;
 import com.fourquant.riqae.pacs.tools.Operation;
 import org.dcm4che3.tool.findscu.FindSCU;
 import org.dcm4che3.tool.getscu.GetSCU;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
-import java.util.function.Consumer;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import static com.fourquant.riqae.pacs.SCUOperationWrapperHelper.*;
 import static com.fourquant.riqae.pacs.csv.CSVProtocol.*;
-import static com.fourquant.riqae.pacs.tools.Operation.*;
-import static java.nio.file.Files.readAllBytes;
+import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.createCSVDataRows;
+import static com.fourquant.riqae.pacs.tools.Operation.FETCH_SERIES;
 
 public final class SCUOperationWrapper {
 
@@ -32,69 +37,105 @@ public final class SCUOperationWrapper {
     this.port = port;
   }
 
-  private static FileFilter dcmFilter() {
-    return pathname -> pathname.getName().endsWith(".dcm");
-  }
-
-  public static <T> Consumer<T> measuringConsumer(final Consumer<T> block) {
-    return t -> {
-      float startTime = System.nanoTime();
-      block.accept(t);
-      float endTime = System.nanoTime();
-      float duration = (endTime - startTime) / 1000000 / 1000;
-
-      log.info("Duration: " + duration + " seconds");
-    };
-  }
-
-  final public String[] resolve(final Operation operation,
-                                final String argument)
-        throws IOException, InterruptedException {
-
-    final File tempDirectory = createTempDirectory();
-
-    final String[] arguments = createSCUArguments(
-          argument, tempDirectory, operation);
-
-    final String[] xmlResults =
-          executeFindSCU(tempDirectory, arguments);
-
-    deleteOnExit(tempDirectory);
-
-    return xmlResults;
-  }
-
-  final public String[] resolvePatientIDs(final String patientName)
-        throws IOException, InterruptedException {
-
-    return resolve(RESOLVE_PATIENT_IDS, patientName);
-  }
-
-  public String[] resolveStudyInstanceUIDs(final String patientID)
-        throws IOException, InterruptedException {
-
-    return resolve(RESOLVE_STUDY_INSTANCE_UIDS, patientID);
-  }
-
-  public String[] resolveSeriesInstanceUIDs(final String studyInstanceUID)
-        throws IOException, InterruptedException {
-
-    return resolve(RESOLVE_SERIES_INSTANCE_UIDS, studyInstanceUID);
-  }
-
   public File[] fetchSeries(final String seriesInstanceUID)
-        throws IOException, InterruptedException {
+        throws IOException, LoggingFunctionException {
 
     final File tempDirectory = createTempDirectory();
 
     final String[] scuArguments = createSCUArguments(
           seriesInstanceUID, tempDirectory, FETCH_SERIES);
 
-    final File[] files = executeFetchSCU(tempDirectory, scuArguments);
+    final File[] files;
+
+    files = executeGetSCU(tempDirectory, scuArguments);
 
     deleteOnExit(tempDirectory);
 
     return files;
+
+  }
+
+  private String[] executeFindSCU(final File tempDirectory,
+                                  final String... command)
+        throws IOException, LoggingFunctionException {
+
+    return executeFindSCU(tempDirectory.toPath(), command);
+  }
+
+  private String[] executeFindSCU(final Path tempDirectory,
+                                  final String... command)
+        throws IOException, LoggingFunctionException {
+
+    final Method method;
+
+    try {
+
+      method = FindSCU.class.getMethod("main", String[].class);
+
+      final Object[] args = {command};
+
+      final LoggingFunction loggingFunction = new LoggingFunction();
+
+      final Float duration = loggingFunction.execute(method, args);
+
+      final StringBuilder stringBuilder = new StringBuilder();
+      for (final String cmd : command) {
+        stringBuilder.append(cmd);
+        stringBuilder.append(" ");
+      }
+
+      log.info(
+            "executing " + method.getName() + " on " + FindSCU.class.getName() +
+                  " with args " + stringBuilder.toString() + " took " + duration);
+
+      return readFiles(tempDirectory);
+
+
+    } catch (NoSuchMethodException e) {
+      throw new LoggingFunctionException(e);
+    }
+  }
+
+  private File[] executeGetSCU(final File tempDirectory,
+                               final String... command)
+        throws IOException, LoggingFunctionException {
+
+    final Method method;
+
+    try {
+
+      method = GetSCU.class.getMethod("main", String[].class);
+
+      final Object[] args = {command};
+
+      final LoggingFunction loggingFunction = new LoggingFunction();
+
+      final Float duration = loggingFunction.execute(method, args);
+
+      final StringBuilder stringBuilder = new StringBuilder();
+      for (final String cmd : command) {
+        stringBuilder.append(cmd);
+        stringBuilder.append(" ");
+      }
+
+      log.info(
+            "executing " + method.getName() + " on " + GetSCU.class.getName() +
+                  " with args " + stringBuilder.toString() + " took " + duration);
+
+      final File[] outFileList = (
+            tempDirectory.listFiles());
+
+      assert outFileList != null;
+
+      return outFileList;
+
+    } catch (NoSuchMethodException e) {
+      throw new LoggingFunctionException(e);
+    }
+  }
+
+  public ExecutionWrapper execute(final Operation operation) {
+    return new ExecutionWrapper(operation);
   }
 
   private String[] createSCUArguments(
@@ -103,18 +144,11 @@ public final class SCUOperationWrapper {
     return createSCUArguments(argument, tempDirectory.getAbsolutePath(), op);
   }
 
-  private String[] createSCUArguments(
-        final String argument, final Path tempDirectory,
-        final Operation op) {
-
-    return createSCUArguments(argument, tempDirectory.toString(), op);
-  }
-
   private String[] createSCUArguments(final String argument,
                                       final String tempDirectory,
-                                      final Operation op) {
+                                      final Operation operation) {
 
-    switch (op) {
+    switch (operation) {
       case RESOLVE_PATIENT_IDS:
 
         return new String[]{"-r", PATIENT_ID_KEYWORD,
@@ -168,79 +202,82 @@ public final class SCUOperationWrapper {
     }
   }
 
-  private String[] executeFindSCU(final File tempDirectory,
-                                  final String... command)
-        throws IOException, InterruptedException {
+  public class ExecutionWrapper {
+    private Operation operation;
 
-    return executeFindSCU(tempDirectory.toPath(), command);
-  }
-
-  private String[] executeFindSCU(final Path tempDirectory,
-                                  final String... command)
-        throws IOException, InterruptedException {
-
-    final Consumer<Void> wrap =
-          measuringConsumer(Void -> FindSCU.main(command));
-
-    wrap.accept(null);
-
-    return readFiles(tempDirectory);
-  }
-
-  private File[] executeFetchSCU(final File tempDirectory,
-                                 final String... command)
-        throws IOException, InterruptedException {
-
-    final Consumer<Void> wrap =
-          measuringConsumer(Void -> GetSCU.main(command));
-
-    wrap.accept(null);
-
-    final File[] outFileList = (
-          tempDirectory.listFiles());
-
-    assert outFileList != null;
-
-    return outFileList;
-  }
-
-  private String[] readFiles(final Path directory) throws IOException {
-    final File directoryFile = directory.toFile();
-
-    final File[] dcmFiles = (
-          directoryFile.listFiles(
-                dcmFilter()));
-
-    final String[] xmlContents = new String[dcmFiles.length];
-
-    if (dcmFiles.length > 0) {
-
-      int i = 0;
-
-      for (final File dcmFile : dcmFiles) {
-
-        xmlContents[i++] =
-              new String(
-                    readAllBytes(
-                          dcmFile.toPath()));
-
-      }
+    public ExecutionWrapper(Operation operation) {
+      this.operation = operation;
     }
 
-    return xmlContents;
+    public String[] on(final String argument)
+          throws LoggingFunctionException, IOException {
+
+      final File tempDirectory = createTempDirectory();
+
+      final String[] arguments = createSCUArguments(
+            argument, tempDirectory, operation);
+
+      final String[] xmlResults =
+            executeFindSCU(tempDirectory, arguments);
+
+      deleteOnExit(tempDirectory);
+
+      return xmlResults;
+
+    }
+
+    public Set<CSVDataRow> on(final Set<CSVDataRow> inputCSVDataRows)
+          throws LoggingFunctionException, IOException {
+
+      try {
+
+        final Set<CSVDataRow> outputCSVDataRows = new HashSet<>();
+
+        for (final CSVDataRow row : inputCSVDataRows) {
+
+          final String id;
+
+          switch (operation){
+            case RESOLVE_PATIENT_IDS:
+
+              id = row.getPatientName();
+              break;
+
+            case RESOLVE_STUDY_INSTANCE_UIDS:
+
+              id = row.getPatientID();
+              break;
+
+            case RESOLVE_SERIES_INSTANCE_UIDS:
+
+              id = row.getStudyInstanceUID();
+              break;
+
+            case FETCH_SERIES:
+
+              id = row.getSeriesInstanceUID();
+              break;
+
+            default:
+              id = null;
+              assert false;
+          }
+
+          final String[] xmlResults =
+                execute(operation).on(id);
+
+          outputCSVDataRows.addAll(
+                createCSVDataRows(xmlResults));
+
+        }
+
+        return outputCSVDataRows;
+
+      } catch (ParserConfigurationException | SAXException e) {
+        throw new IOException(e);
+      }
+
+    }
   }
 
-  public final File createTempDirectory() throws IOException {
-
-    final Path tempDirectory =
-          java.nio.file.Files.createTempDirectory("integrationTest-temp-");
-
-    return tempDirectory.toFile();
-
-  }
-
-  private void deleteOnExit(final File file) {
-
-    file.deleteOnExit();
-  }
 }

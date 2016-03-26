@@ -5,7 +5,6 @@ import org.apache.commons.cli.Options;
 import static com.fourquant.riqae.pacs.tools.Operation.RESOLVE_PATIENT_IDS;
 import static org.apache.commons.cli.Option.builder;
 
-//todo introduce optiongroups
 public class OptionsFactory {
 
   public static final String optPort = "p";

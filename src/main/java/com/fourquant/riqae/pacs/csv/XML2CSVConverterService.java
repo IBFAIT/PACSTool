@@ -22,7 +22,7 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 
 public class XML2CSVConverterService {
 
-  public final Set<CSVDataRow> convert(final String xmlContent)
+  public static Set<CSVDataRow> convert(final String xmlContent)
         throws IOException, ParserConfigurationException, SAXException {
 
     final DocumentBuilderFactory factory = newInstance();
@@ -109,14 +109,17 @@ public class XML2CSVConverterService {
     return csvDataRows;
   }
 
-  public Set<CSVDataRow> createCSVDataRows(final String[] xmlResults)
+  public static Set<CSVDataRow> createCSVDataRows(final String[] xmlResults)
         throws IOException, ParserConfigurationException, SAXException {
 
     final Set<CSVDataRow> csvDataRows = new HashSet<>();
 
     for (final String xml : xmlResults) {
-      final XML2CSVConverterService xml2CSVConverterService = new XML2CSVConverterService();
-      final Set<CSVDataRow> dataRows = xml2CSVConverterService.convert(xml);
+
+      final XML2CSVConverterService service = new XML2CSVConverterService();
+
+      final Set<CSVDataRow> dataRows = convert(xml);
+
       csvDataRows.addAll(dataRows);
     }
 

@@ -3,18 +3,17 @@ package com.fourquant.riqae.pacs;
 import com.fourquant.riqae.pacs.csv.CSVDataRow;
 import com.fourquant.riqae.pacs.csv.CSVReaderService;
 import com.fourquant.riqae.pacs.csv.CSVWriterService;
-import com.fourquant.riqae.pacs.csv.XML2CSVConverterService;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.fourquant.riqae.pacs.SCUOperationWrapperHelper.createTempDirectory;
 import static com.fourquant.riqae.pacs.TestConstants.*;
+import static com.fourquant.riqae.pacs.tools.Operation.*;
 import static java.util.Collections.addAll;
 import static org.junit.Assert.assertFalse;
 
@@ -27,11 +26,8 @@ public class LocalOsirixTest {
 
   private CSVWriterService csvWriterService = new CSVWriterService();
 
-  private XML2CSVConverterService xml2CSVConverterService =
-        new XML2CSVConverterService();
-
   @Test
-  public void testWorkflow() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+  public void testWorkflow() throws IOException, LoggingFunctionException {
 
     /*
 
@@ -75,25 +71,18 @@ public class LocalOsirixTest {
           csvReaderService.createCSVDataRows(
                 getClass().getResource(namesFile).getFile());
 
-    final Set<CSVDataRow> nameAndIdDataRows = new HashSet<>();
-
     /*
       2. Resolve PatientNames to PatientIDs
      */
-    for (final CSVDataRow nameDataRow : namesDataRows) {
 
-      final String[] xmlResults =
-            scuOperationWrapper.resolvePatientIDs(nameDataRow.getPatientName());
-
-      nameAndIdDataRows.addAll(
-            xml2CSVConverterService.createCSVDataRows(xmlResults));
-    }
+    final Set<CSVDataRow> nameAndIdDataRows =
+          scuOperationWrapper.execute(RESOLVE_PATIENT_IDS).on(namesDataRows);
 
     /*
       3. Write csv file with PatientNames and PatientIDs -> namesAndIds.csv
      */
     final Path tmpDirectoryNamesAndIds =
-          scuOperationWrapper.createTempDirectory().toPath();
+          createTempDirectory().toPath();
 
     final String namesAndIdFile =
           tmpDirectoryNamesAndIds.toString() + "/namesAndIDs.csv";
@@ -114,7 +103,8 @@ public class LocalOsirixTest {
       6. Resolve PatientIds to StudyInstanceUIDs
      */
     final Set<CSVDataRow> studyIdDataRows =
-          resolveStudyInstanceIDs(editedNameAndIdDataRows);
+          scuOperationWrapper.execute(RESOLVE_STUDY_INSTANCE_UIDS).
+                on(editedNameAndIdDataRows);
 
     for (final CSVDataRow csvDataRow : studyIdDataRows) {
       assertFalse(csvDataRow.getPatientName().equals("Brebix"));
@@ -124,10 +114,11 @@ public class LocalOsirixTest {
       7. Write csv file with StudyInstanceUIDs -> studyInstanceUIDs.csv
      */
     final Path tmpDirectoryStudyInstanceUIDs =
-          scuOperationWrapper.createTempDirectory().toPath();
+          createTempDirectory().toPath();
 
-    final String studyInstanceUIDFile = tmpDirectoryStudyInstanceUIDs.toString() +
-          "/studyInstanceUIDs.csv";
+    final String studyInstanceUIDFile =
+          tmpDirectoryStudyInstanceUIDs.toString() +
+                "/studyInstanceUIDs.csv";
 
     csvWriterService.writeCSVFile(studyIdDataRows, studyInstanceUIDFile);
 
@@ -145,7 +136,8 @@ public class LocalOsirixTest {
       10. Resolve StudyInstanceUIDs to SeriesInstanceUIDs
      */
     final Set<CSVDataRow> seriesIdDataRows =
-          resolveSeriesInstanceUIds(editedStudyIdDataRows);
+          scuOperationWrapper.execute(RESOLVE_SERIES_INSTANCE_UIDS).
+                on(editedStudyIdDataRows);
 
     for (final CSVDataRow csvDataRow : seriesIdDataRows) {
       assertFalse(csvDataRow.getPatientName().equals("Brebix"));
@@ -155,10 +147,11 @@ public class LocalOsirixTest {
       11. Write csv file with SeriesInstanceUIDs -> seriesInstanceUIDs.csv
      */
     final Path tmpDirectorySeriesInstanceUIDs =
-          scuOperationWrapper.createTempDirectory().toPath();
+          createTempDirectory().toPath();
 
-    final String seriesInstanceUIDsFile = tmpDirectorySeriesInstanceUIDs.toString()
-          + "/seriesInstanceUIDs.csv";
+    final String seriesInstanceUIDsFile =
+          tmpDirectorySeriesInstanceUIDs.toString()
+                + "/seriesInstanceUIDs.csv";
 
     csvWriterService.writeCSVFile(seriesIdDataRows, seriesInstanceUIDsFile);
 
@@ -169,35 +162,34 @@ public class LocalOsirixTest {
     /*
       13. Fetch images
      */
+
     final Set<File> imageFiles = fetchSeries(seriesIdDataRows);
 
-    new File(tmpDirectoryNamesAndIds.toUri()).deleteOnExit();
-    new File(tmpDirectoryStudyInstanceUIDs.toUri()).deleteOnExit();
-    new File(tmpDirectorySeriesInstanceUIDs.toUri()).deleteOnExit();
-  }
-
-  private Set<CSVDataRow> resolveStudyInstanceIDs(
-        final Set<CSVDataRow> nameAndIdDataRows)
-        throws IOException, InterruptedException, ParserConfigurationException,
-        SAXException {
-
-    final Set<CSVDataRow> studyIdDataRows = new HashSet<>();
-
-    for (final CSVDataRow row : nameAndIdDataRows) {
-
-      final String[] xmlResults =
-            scuOperationWrapper.resolveStudyInstanceUIDs(
-                  row.getPatientID());
-
-      studyIdDataRows.addAll(
-            xml2CSVConverterService.createCSVDataRows(xmlResults));
+    for (final File file : imageFiles) {
+      System.out.println("file = " + file);
     }
-    return studyIdDataRows;
+
+//    todo: dcm2jpg laufen lassen...
+
+
+    /*
+      14. Have RIQAE process the images
+    */
+
+    /*
+      15. Clean up
+    */
+
+    new File(tmpDirectoryNamesAndIds.toUri()).deleteOnExit();
+
+    new File(tmpDirectoryStudyInstanceUIDs.toUri()).deleteOnExit();
+
+    new File(tmpDirectorySeriesInstanceUIDs.toUri()).deleteOnExit();
+
   }
 
   private Set<File> fetchSeries(final Set<CSVDataRow> seriesIDDataRows)
-        throws IOException, InterruptedException, ParserConfigurationException,
-        SAXException {
+        throws IOException, LoggingFunctionException {
 
     final Set<File> files = new HashSet<>();
 
@@ -211,24 +203,5 @@ public class LocalOsirixTest {
     }
 
     return files;
-  }
-
-  private Set<CSVDataRow> resolveSeriesInstanceUIds(
-        final Set<CSVDataRow> studyInstanceUidDataRows)
-        throws IOException, InterruptedException, ParserConfigurationException,
-        SAXException {
-
-    final Set<CSVDataRow> seriesInstanceUIDDataRows = new HashSet<>();
-
-    for (final CSVDataRow row : studyInstanceUidDataRows) {
-
-      final String[] xmlResults =
-            scuOperationWrapper.resolveSeriesInstanceUIDs(
-                  row.getStudyInstanceUID());
-
-      seriesInstanceUIDDataRows.addAll(
-            xml2CSVConverterService.createCSVDataRows(xmlResults));
-    }
-    return seriesInstanceUIDDataRows;
   }
 }
