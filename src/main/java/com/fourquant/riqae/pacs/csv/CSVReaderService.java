@@ -13,6 +13,12 @@ import static com.fourquant.riqae.pacs.csv.CSVProtocol.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * The {@code CSVReaderService} class encapsulates the parsing of csv files.
+ * <p>
+ * Well defined (see {@link CSVProtocol}) csv files get transformed to {@link CSVDataRow}s.
+ */
+
 public class CSVReaderService {
 
   public final Set<CSVDataRow> createDataRows(final String filePath)
@@ -27,7 +33,7 @@ public class CSVReaderService {
     return records.stream().map(this::createDataRow).collect(toSet());
   }
 
-  public final CSVDataRow createDataRow(final CSVRecord csvRecord) {
+  private CSVDataRow createDataRow(final CSVRecord csvRecord) {
 
     final String patientID = csvRecord.get(PATIENT_ID_FIELD);
     final String patientName = csvRecord.get(PATIENT_NAME_FIELD);
@@ -53,10 +59,14 @@ public class CSVReaderService {
         final Set<String> patientNames) {
 
     final Set<CSVDataRow> csvDataRows = new HashSet<>();
+
     for (String patientName : patientNames) {
+
       final CSVDataRow CSVDataRow = new CSVDataRow();
+
       CSVDataRow.setPatientName(patientName);
       csvDataRows.add(CSVDataRow);
+
     }
 
     return csvDataRows;

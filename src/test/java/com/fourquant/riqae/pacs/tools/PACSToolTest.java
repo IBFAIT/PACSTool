@@ -100,7 +100,9 @@ public class PACSToolTest {
     PACSTool.main(args);
 
     assertTrue(outContent.toString().contains(nameAnna));
-    assertTrue(outContent.toString().contains(getCSVDataRow(nameAnna).getPatientID()));
+
+    assertTrue(outContent.toString().contains(
+          getCSVDataRow(nameAnna).getPatientID()));
   }
 
   @Test
@@ -161,7 +163,6 @@ public class PACSToolTest {
                 getCSVDataRow(nameAnna).getSeriesInstanceUID()));
   }
 
-
   @Test
   public void testOut() {
     System.out.print("hello");
@@ -173,5 +174,4 @@ public class PACSToolTest {
     System.err.print("hello again");
     assertEquals("hello again", errContent.toString());
   }
-
 }

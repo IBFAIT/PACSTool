@@ -21,12 +21,12 @@ import static org.junit.Assert.assertFalse;
 
 public class LocalOsirixTest {
 
-  private Dcm4CheWrapper dcm4CheWrapper =
+  private final Dcm4CheWrapper dcm4CheWrapper =
         new Dcm4CheWrapper(userName, server, port);
 
-  private CSVReaderService csvReaderService = new CSVReaderService();
+  private final CSVReaderService csvReaderService = new CSVReaderService();
 
-  private CSVWriterService csvWriterService = new CSVWriterService();
+  private final CSVWriterService csvWriterService = new CSVWriterService();
 
   @Test
   public void testWorkflow() throws IOException, LoggingFunctionException {
@@ -59,7 +59,11 @@ public class LocalOsirixTest {
 
       13. Fetch images
 
-      14. Have RIQAE process the images
+      14. Demonstrate dcm2xml
+
+      15. Demonstrate dcm2jpg
+
+      16. Clean up
 
      */
 
@@ -197,8 +201,10 @@ public class LocalOsirixTest {
     counter = 0;
     for (final File dicomImageFile : dicomImageFiles) {
 
-      Dcm2Jpg.main(new String[]{
-            dicomImageFile.getAbsolutePath(), dicomImageFile.getAbsolutePath() + ".jpg"});
+      Dcm2Jpg.main(
+            new String[]{
+                  dicomImageFile.getAbsolutePath(),
+                  dicomImageFile.getAbsolutePath() + ".jpg"});
 
       if (counter++ > 5)
         break;

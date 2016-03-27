@@ -16,11 +16,31 @@ import java.util.Set;
 import static com.fourquant.riqae.pacs.tools.Operation.*;
 import static java.lang.System.out;
 
-public final class PACSTool {
+/**
+ * The {@code PACSTool} class contains the {@code main} method and
+ * represents the point of access to the logic from the outer world
+ * <p>
+ * <blockquote><pre>
+ *   java -jar PACS-Tool.jar -pn Verdi -pn Neri -s localhost -u OSIRIX -p 11112 -c RESOLVE_PATIENT_IDS
+ * </pre></blockquote>
+ * <blockquote><pre>
+ *   java -jar PACS-Tool.jar -input-file test-classes/osirixNames.csv -s localhost -u OSIRIX -p 11112 -c RESOLVE_PATIENT_IDS
+ * </pre></blockquote>
+ * <blockquote><pre>
+ *   java -jar PACS-Tool.jar -input-file test-classes/osirixNames.csv -s localhost -u OSIRIX -p 11112 -c RESOLVE_PATIENT_IDS -o /tmp/out.csv
+ * </pre></blockquote>
+ * <blockquote><pre>
+ *   java -jar PACS-Tool.jar -input-file test-classes/osirixNamesAndIds.csv -s localhost -u OSIRIX -p 11112 -c RESOLVE_STUDY_INSTANCE_UIDS -o /tmp/out.csv
+ * </pre></blockquote>
+ */
 
-  private final static CSVReaderService csvReaderService = new CSVReaderService();
+final class PACSTool {
 
-  private final static CSVWriterService csvWriterService = new CSVWriterService();
+  private final static CSVReaderService csvReaderService =
+        new CSVReaderService();
+
+  private final static CSVWriterService csvWriterService =
+        new CSVWriterService();
 
   public static void main(final String[] args)
         throws ParseException, ParserConfigurationException,

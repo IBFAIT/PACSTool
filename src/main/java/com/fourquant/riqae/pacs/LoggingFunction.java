@@ -3,7 +3,7 @@ package com.fourquant.riqae.pacs;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public final class LoggingFunction {
+final class LoggingFunction {
 
   public Float execute(final Method method, final Object[] args)
         throws LoggingFunctionException {

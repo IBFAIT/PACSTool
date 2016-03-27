@@ -9,30 +9,31 @@ import static java.nio.file.Files.readAllBytes;
 
 public class Dcm4CheWrapperHelper {
 
-  static FileFilter dcmFilter() {
+  public static FileFilter dcmFilter() {
     return pathname -> pathname.getName().endsWith(".dcm");
   }
 
-  static FileFilter all() {
+  public static FileFilter all() {
     return pathname -> true;
   }
 
-  static String[] readFiles(final Path directory, final FileFilter fileFilter)
+  public static String[] readFiles(final Path directory,
+                                   final FileFilter fileFilter)
         throws IOException {
 
     final File directoryFile = directory.toFile();
 
-    final File[] dcmFiles = (
+    final File[] files = (
           directoryFile.listFiles(
                 fileFilter));
 
-    final String[] xmlContents = new String[dcmFiles.length];
+    final String[] xmlContents = new String[files.length];
 
-    if (dcmFiles.length > 0) {
+    if (files.length > 0) {
 
       int i = 0;
 
-      for (final File dcmFile : dcmFiles) {
+      for (final File dcmFile : files) {
 
         xmlContents[i++] =
               new String(
@@ -45,7 +46,7 @@ public class Dcm4CheWrapperHelper {
     return xmlContents;
   }
 
-  static String[] readFiles(final Path directory) throws IOException {
+  public static String[] readFiles(final Path directory) throws IOException {
 
     return readFiles(directory, all());
 

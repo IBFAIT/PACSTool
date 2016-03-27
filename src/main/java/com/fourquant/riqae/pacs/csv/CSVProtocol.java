@@ -5,6 +5,13 @@ import org.apache.commons.csv.CSVFormat;
 
 import static org.apache.commons.csv.CSVFormat.DEFAULT;
 
+/**
+ * The {@code CSVProtocol} interface defines the file format for *.csv input
+ * and *.csv output files.
+ * <p>
+ * Moreover it encapsulates constants needed for access to dcm4che tools.
+ */
+
 public interface CSVProtocol {
   String PATIENT_NAME_FIELD = "Patient Name";
   String PATIENT_NAME_KEYWORD = "PatientName";

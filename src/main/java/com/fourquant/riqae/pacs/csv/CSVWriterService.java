@@ -13,33 +13,37 @@ import java.util.logging.Logger;
 
 import static com.fourquant.riqae.pacs.csv.CSVProtocol.CSV_FORMAT;
 
+/**
+ * The {@code CSVWriterService} class encapsulates the writing of
+ * {@link CSVDataRow}s to csv files.
+ */
 
 public class CSVWriterService {
 
   private static final Logger log =
         Logger.getLogger(CSVWriterService.class.getName());
 
-  public final void writeDataRows(final Collection<CSVDataRow> CSVDataRows,
+  public final void writeDataRows(final Collection<CSVDataRow> csvDataRows,
                                   final String filePath) throws IOException {
 
     final FileWriter fw = new FileWriter(filePath);
 
-    writeDataRows(CSVDataRows, fw);
+    writeDataRows(csvDataRows, fw);
   }
 
-  public final void writeDataRows(final Collection<CSVDataRow> CSVDataRows)
+  public final void writeDataRows(final Collection<CSVDataRow> csvDataRows)
         throws IOException {
 
-    writeDataRows(CSVDataRows, System.out);
+    writeDataRows(csvDataRows, System.out);
   }
 
   public final void writeDataRows(
-        final Collection<CSVDataRow> CSVDataRows,
+        final Collection<CSVDataRow> csvDataRows,
         final Appendable appendable) throws IOException {
 
     final CSVPrinter csvPrinter = new CSVPrinter(appendable, CSV_FORMAT);
 
-    for (final CSVDataRow csvDataRow : CSVDataRows) {
+    for (final CSVDataRow csvDataRow : csvDataRows) {
 
       final List<Serializable> line = new ArrayList<>();
 
@@ -63,6 +67,7 @@ public class CSVWriterService {
                                  final String csvFile) throws IOException {
 
     final CSVWriterService csvWriterService = new CSVWriterService();
+
     csvWriterService.writeDataRows(csvDataRows, csvFile);
   }
 }

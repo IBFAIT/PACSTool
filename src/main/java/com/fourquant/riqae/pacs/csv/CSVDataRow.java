@@ -1,5 +1,13 @@
 package com.fourquant.riqae.pacs.csv;
 
+/**
+ * The {@code CSVDataRow} class represents a record of a csv file with format
+ * <pre>Patient Name;Patient ID;Study Instance UID;Study Date;Study Description;Series Instance UID;Series Description;Result</pre>
+ * as defined in {@link CSVProtocol}
+ *
+ * @see com.fourquant.riqae.pacs.csv.CSVProtocol
+ */
+
 public class CSVDataRow {
   private String patientName;
   private String patientID;
@@ -46,7 +54,7 @@ public class CSVDataRow {
     return result;
   }
 
-  final void setResult(String result) {
+  public final void setResult(String result) {
     this.result = result;
   }
 

@@ -5,14 +5,14 @@ import org.apache.commons.cli.*;
 import static com.fourquant.riqae.pacs.tools.OptionsFactory.*;
 import static java.lang.Integer.parseInt;
 
-public final class CommandLineProcessor {
+final class CommandLineProcessor {
 
-  public static final int PACS_SERVER_PORT_DEFAULT = 9090;
-  public static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
-  public static final String PACS_SERVER_USER_DEFAULT = "john";
+  private static final int PACS_SERVER_PORT_DEFAULT = 9090;
+  private static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
+  private static final String PACS_SERVER_USER_DEFAULT = "john";
 
-  final CommandLine line;
-  final Options options;
+  private final CommandLine line;
+  private final Options options;
 
   public CommandLineProcessor(final String[] args) throws ParseException {
 
@@ -67,11 +67,11 @@ public final class CommandLineProcessor {
     return line.hasOption(optOutputFile);
   }
 
-  private boolean isHelp() {
+  public boolean isHelp() {
     return line.hasOption(optHelp);
   }
 
-  private boolean hasCommand() {
+  public boolean hasCommand() {
     return line.hasOption(optCommand);
   }
 
@@ -91,7 +91,7 @@ public final class CommandLineProcessor {
     return line.getOptionValue(optCommand);
   }
 
-  private boolean has(final String parameter) {
+  public boolean has(final String parameter) {
     return line.hasOption(parameter);
   }
 

@@ -20,6 +20,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.parsers.DocumentBuilderFactory.newInstance;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
+/**
+ * The {@code XML2CSVConverterService} class converts dicom-xml documents to
+ * {@link CSVDataRow}s.
+ */
+
 public class XML2CSVConverterService {
 
   public static Set<CSVDataRow> convert(final String xmlContent)
@@ -29,9 +34,9 @@ public class XML2CSVConverterService {
 
     final DocumentBuilder builder;
 
-    final Set<CSVDataRow> csvDataRows = new HashSet<>();
-
     builder = factory.newDocumentBuilder();
+
+    final Set<CSVDataRow> csvDataRows = new HashSet<>();
 
     final InputStream stream =
           new ByteArrayInputStream(xmlContent.getBytes(UTF_8));
@@ -109,14 +114,12 @@ public class XML2CSVConverterService {
     return csvDataRows;
   }
 
-  public static Set<CSVDataRow> createCSVDataRows(final String[] xmlResults)
+  public static Set<CSVDataRow> convert(final String[] xmlResults)
         throws IOException, ParserConfigurationException, SAXException {
 
     final Set<CSVDataRow> csvDataRows = new HashSet<>();
 
     for (final String xml : xmlResults) {
-
-      final XML2CSVConverterService service = new XML2CSVConverterService();
 
       final Set<CSVDataRow> dataRows = convert(xml);
 

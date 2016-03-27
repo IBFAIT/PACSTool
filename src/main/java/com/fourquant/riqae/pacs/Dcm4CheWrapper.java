@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 import static com.fourquant.riqae.pacs.Dcm4CheWrapperHelper.*;
 import static com.fourquant.riqae.pacs.csv.CSVProtocol.*;
-import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.createCSVDataRows;
+import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.convert;
 import static com.fourquant.riqae.pacs.tools.Operation.FETCH_SERIES;
 
 public final class Dcm4CheWrapper {
@@ -25,9 +25,9 @@ public final class Dcm4CheWrapper {
   private static final Logger log =
         Logger.getLogger(Dcm4CheWrapper.class.getName());
 
-  final String userName;
-  final String server;
-  final String port;
+  private final String userName;
+  private final String server;
+  private final String port;
 
   public Dcm4CheWrapper(final String userName, final String server,
                         final String port) {
@@ -49,15 +49,14 @@ public final class Dcm4CheWrapper {
 
     files = executeGetSCU(tempDirectory, scuArguments);
 
-
     deleteOnExit(tempDirectory);
 
     return files;
 
   }
 
-  private void execute(final Method method,
-                       final String... command) throws LoggingFunctionException {
+  public void execute(final Method method,
+                      final String... command) throws LoggingFunctionException {
 
     final Object[] args = {command};
 
@@ -78,8 +77,8 @@ public final class Dcm4CheWrapper {
 
   }
 
-  private String[] executeFindSCU(final Path tempDirectory,
-                                  final String... command)
+  public String[] executeFindSCU(final Path tempDirectory,
+                                 final String... command)
         throws IOException, LoggingFunctionException {
 
     final Method method;
@@ -97,9 +96,9 @@ public final class Dcm4CheWrapper {
     }
   }
 
-  private File[] executeGetSCU(final File tempDirectory,
-                               final String... command)
-        throws IOException, LoggingFunctionException {
+  public File[] executeGetSCU(final File tempDirectory,
+                              final String... command)
+        throws LoggingFunctionException {
 
     final Method method;
 
@@ -125,8 +124,9 @@ public final class Dcm4CheWrapper {
     return new ExecutionWrapper(operation);
   }
 
-  private String[] createSCUArguments(
-        final String argument, final File tempDirectory, final Operation op) {
+  private String[] createSCUArguments(final String argument,
+                                      final File tempDirectory,
+                                      final Operation op) {
 
     return createSCUArguments(argument, tempDirectory.getAbsolutePath(), op);
   }
@@ -190,13 +190,13 @@ public final class Dcm4CheWrapper {
   }
 
   public class ExecutionWrapper {
-    private Operation operation;
+    private final Operation operation;
 
-    public ExecutionWrapper(final Operation operation) {
+    ExecutionWrapper(final Operation operation) {
       this.operation = operation;
     }
 
-    public String[] on(final String argument)
+    String[] on(final String argument)
           throws LoggingFunctionException, IOException {
 
       final File tempDirectory = createTempDirectory();
@@ -240,11 +240,6 @@ public final class Dcm4CheWrapper {
               id = row.getStudyInstanceUID();
               break;
 
-            case FETCH_SERIES:
-
-              id = row.getSeriesInstanceUID();
-              break;
-
             default:
               id = null;
               assert false;
@@ -254,7 +249,7 @@ public final class Dcm4CheWrapper {
                 execute(operation).on(id);
 
           outputCSVDataRows.addAll(
-                createCSVDataRows(xmlResults));
+                convert(xmlResults));
 
         }
 
@@ -266,5 +261,4 @@ public final class Dcm4CheWrapper {
 
     }
   }
-
 }

@@ -35,6 +35,7 @@ public class OptionsFactory {
         RESOLVE_PATIENT_IDS.toString();
 
   public static Options createOptions() {
+
     final Options options = new Options();
 
     options.addOption(builder(optServer)
