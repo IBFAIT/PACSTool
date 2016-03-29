@@ -36,6 +36,8 @@ Usage: PACSTool [options]
        PACS server IP address
        Default: localhost
 
+    -bind, -b
+      <aet[@ip][:port]>
 ```
 
 # Examples

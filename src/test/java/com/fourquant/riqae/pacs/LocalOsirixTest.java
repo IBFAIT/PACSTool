@@ -23,7 +23,7 @@ import static org.junit.Assert.assertFalse;
 public class LocalOsirixTest {
 
   private final Dcm4CheWrapper dcm4CheWrapper =
-        new Dcm4CheWrapper(userName, server, port);
+        new Dcm4CheWrapper(userName, server, port, bind);
 
   private final CSVReaderService csvReaderService = new CSVReaderService();
 

@@ -10,6 +10,7 @@ final class CommandLineProcessor {
   private static final int PACS_SERVER_PORT_DEFAULT = 9090;
   private static final String PACS_SERVER_ADDRESS_DEFAULT = "localhost";
   private static final String PACS_SERVER_USER_DEFAULT = "john";
+  private static final String BIND_DEFAULT = "localhost";
 
   private final CommandLine line;
   private final Options options;
@@ -75,6 +76,10 @@ final class CommandLineProcessor {
     return line.hasOption(optCommand);
   }
 
+  public boolean hasBind() {
+    return line.hasOption(optBind);
+  }
+
   public String[] getPatientNames() {
     return line.getOptionValues(optPatientName);
   }
@@ -89,6 +94,18 @@ final class CommandLineProcessor {
 
   public String getCommand() {
     return line.getOptionValue(optCommand);
+  }
+
+  public String getBind() {
+
+    final String bind;
+
+    if (hasBind())
+      bind = line.getOptionValue(optUser);
+    else
+      bind = BIND_DEFAULT;
+
+    return bind;
   }
 
   public boolean has(final String parameter) {

@@ -2,7 +2,6 @@ package com.fourquant.riqae.pacs.tools;
 
 import org.apache.commons.cli.Options;
 
-import static com.fourquant.riqae.pacs.tools.Operation.RESOLVE_PATIENT_IDS;
 import static org.apache.commons.cli.Option.builder;
 
 public class OptionsFactory {
@@ -28,11 +27,11 @@ public class OptionsFactory {
   public static final String optCommand = "c";
   public static final String longOptCommand = "command";
 
+  public static final String optBind = "b";
+  public static final String longOptBind = "bind";
+
   public static final String optHelp = "h";
   public static final String longOptHelp = "help";
-
-  public static final String commandResolvePatientIDs =
-        RESOLVE_PATIENT_IDS.toString();
 
   public static Options createOptions() {
 
@@ -92,6 +91,14 @@ public class OptionsFactory {
           .required(false)
           .longOpt(longOptCommand)
           .desc("Command")
+          .build());
+
+    options.addOption(builder(optBind)
+          .hasArg()
+          .argName("bind")
+          .required(false)
+          .longOpt(longOptBind)
+          .desc("Bind")
           .build());
 
     options.addOption(builder(optHelp)

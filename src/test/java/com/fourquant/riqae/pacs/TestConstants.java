@@ -14,6 +14,7 @@ public class TestConstants {
   public final static String userName = "OSIRIX";
   public final static String server = "localhost";
   public final static String port = "11112";
+  public final static String bind = "Osirix";
 
   public static CSVDataRow getCSVDataRow(final String name) {
 

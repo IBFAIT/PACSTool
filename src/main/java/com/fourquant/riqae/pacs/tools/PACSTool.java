@@ -62,11 +62,12 @@ final class PACSTool {
     final String[] patientNames = commandLineProcessor.getPatientNames();
     final String inputFile = commandLineProcessor.getInputFile();
     final String commandString = commandLineProcessor.getCommand();
+    final String bind = commandLineProcessor.getBind();
 
     final Operation command = valueOf(commandString);
 
     final Dcm4CheWrapper dcm4CheWrapper =
-          new Dcm4CheWrapper(user, server, Integer.toString(port));
+          new Dcm4CheWrapper(user, server, Integer.toString(port), bind);
 
     switch (command) {
       case RESOLVE_PATIENT_IDS:

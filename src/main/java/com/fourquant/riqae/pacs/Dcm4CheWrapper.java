@@ -30,13 +30,15 @@ public final class Dcm4CheWrapper {
   private final String userName;
   private final String server;
   private final String port;
+  private final String bind;
 
   public Dcm4CheWrapper(final String userName, final String server,
-                        final String port) {
+                        final String port, final String bind) {
 
     this.userName = userName;
     this.server = server;
     this.port = port;
+    this.bind = bind;
   }
 
   public File[] fetchSeries(final String seriesInstanceUID)
@@ -56,7 +58,10 @@ public final class Dcm4CheWrapper {
     final DecimalFormat decimalFormat = new DecimalFormat("###,###.###");
     decimalFormat.setRoundingMode(CEILING);
 
-    log.info("size of " + tempDirectory.getAbsolutePath() + " is " + decimalFormat.format(sizeOfDirectory) + " bytes, " + decimalFormat.format(sizeOfDirectory / 1_024) + " KB, " + decimalFormat.format(sizeOfDirectory / 1_024 / 1_024) + " MB.");
+    log.info("size of " + tempDirectory.getAbsolutePath() + " is " +
+          decimalFormat.format(sizeOfDirectory) + " bytes, " +
+          decimalFormat.format(sizeOfDirectory / 1_024) + " KB, " +
+          decimalFormat.format(sizeOfDirectory / 1_024 / 1_024) + " MB.");
 
     deleteOnExit(tempDirectory);
 
@@ -149,6 +154,7 @@ public final class Dcm4CheWrapper {
 
         return new String[]{"-r", PATIENT_ID_KEYWORD,
               "-c", userName + "@" + server + ":" + port,
+              "-b", bind,
               "-m", PATIENT_NAME_KEYWORD + "=" + argument.replaceAll(" ", "^"),
               "--out-dir", tempDirectory,
               "--xml"};
@@ -163,6 +169,7 @@ public final class Dcm4CheWrapper {
               "-r", STUDY_DESCRIPTION_KEYWORD,
               "-L", "STUDY",
               "-c", userName + "@" + server + ":" + port,
+              "-b", bind,
               "-m", "PatientID=" + argument,
               "--out-dir", tempDirectory,
               "--xml"};
@@ -179,6 +186,7 @@ public final class Dcm4CheWrapper {
               "-r", SERIES_INSTANCE_UID_KEYWORD,
               "-L", "SERIES",
               "-c", userName + "@" + server + ":" + port,
+              "-b", bind,
               "-m", STUDY_INSTANCE_UI_KEYWORD + "=" + argument,
               "--out-dir", tempDirectory,
               "--xml"};
@@ -188,7 +196,7 @@ public final class Dcm4CheWrapper {
         return new String[]{
               "-L", "SERIES",
               "-c", userName + "@" + server + ":" + port,
-//              "-b", "aet[@ip][:port]",
+              "-b", bind,
               "-m", SERIES_INSTANCE_UID_KEYWORD + "=" + argument,
               "--store-tcs",
               getClass().getResource("/store-tcs.properties").toString(),
