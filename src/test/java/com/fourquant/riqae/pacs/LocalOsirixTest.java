@@ -16,6 +16,7 @@ import java.util.Set;
 import static com.fourquant.riqae.pacs.Dcm4CheWrapperHelper.createTempDirectory;
 import static com.fourquant.riqae.pacs.TestConstants.*;
 import static com.fourquant.riqae.pacs.tools.Operation.*;
+import static java.nio.file.Files.readAllBytes;
 import static java.util.Collections.addAll;
 import static org.junit.Assert.assertFalse;
 
@@ -70,6 +71,7 @@ public class LocalOsirixTest {
 
     /*
       1. Parse csv file with PatientNames (osirixNames.csv)
+
     */
     final String namesFile = "/osirixNames.csv";
 
@@ -145,9 +147,9 @@ public class LocalOsirixTest {
           dcm4CheWrapper.execute(RESOLVE_SERIES_INSTANCE_UIDS).
                 on(editedStudyIdDataRows);
 
-    for (final CSVDataRow csvDataRow : seriesIdDataRows) {
-      assertFalse(csvDataRow.getPatientName().equals("Brebix"));
-    }
+    seriesIdDataRows.forEach(
+          csvDataRow -> assertFalse(
+                csvDataRow.getPatientName().equals("Brebix")));
 
     /*
       11. Write csv file with SeriesInstanceUIDs -> seriesInstanceUIDs.csv
@@ -161,6 +163,16 @@ public class LocalOsirixTest {
 
     csvWriterService.writeCSVFile(seriesIdDataRows, seriesInstanceUIDsFile);
 
+    System.out.println("content of /seriesInstanceUIDs.csv is");
+
+    final Path seriesInstanceUIDsFilePath =
+          new File(seriesInstanceUIDsFile).toPath();
+
+    final String content =
+          new String(readAllBytes(seriesInstanceUIDsFilePath));
+
+    System.out.println(content);
+
     /*
       12. Edit file manually
      */
@@ -170,6 +182,7 @@ public class LocalOsirixTest {
      */
 
     final Set<File> dicomImageFiles = fetchSeries(seriesIdDataRows);
+    System.out.println(dicomImageFiles.size() + " images fetched.");
 
     int counter = 0;
     for (final File dicomImageFile : dicomImageFiles) {
