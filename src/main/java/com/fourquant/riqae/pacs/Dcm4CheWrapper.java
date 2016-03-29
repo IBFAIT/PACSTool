@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -19,6 +20,7 @@ import static com.fourquant.riqae.pacs.Dcm4CheWrapperHelper.*;
 import static com.fourquant.riqae.pacs.csv.CSVProtocol.*;
 import static com.fourquant.riqae.pacs.csv.XML2CSVConverterService.convert;
 import static com.fourquant.riqae.pacs.tools.Operation.FETCH_SERIES;
+import static java.math.RoundingMode.CEILING;
 
 public final class Dcm4CheWrapper {
 
@@ -48,6 +50,13 @@ public final class Dcm4CheWrapper {
     final File[] files;
 
     files = executeGetSCU(tempDirectory, scuArguments);
+
+    float sizeOfDirectory = sizeOfDirectory(tempDirectory.toPath());
+
+    final DecimalFormat decimalFormat = new DecimalFormat("###,###.###");
+    decimalFormat.setRoundingMode(CEILING);
+
+    log.info("size of " + tempDirectory.getAbsolutePath() + " is " + decimalFormat.format(sizeOfDirectory) + " bytes, " + decimalFormat.format(sizeOfDirectory / 1_024) + " KB, " + decimalFormat.format(sizeOfDirectory / 1_024 / 1_024) + " MB.");
 
     deleteOnExit(tempDirectory);
 
