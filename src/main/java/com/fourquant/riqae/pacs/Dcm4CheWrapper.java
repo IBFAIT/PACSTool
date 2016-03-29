@@ -188,6 +188,7 @@ public final class Dcm4CheWrapper {
         return new String[]{
               "-L", "SERIES",
               "-c", userName + "@" + server + ":" + port,
+//              "-b", "aet[@ip][:port]",
               "-m", SERIES_INSTANCE_UID_KEYWORD + "=" + argument,
               "--store-tcs",
               getClass().getResource("/store-tcs.properties").toString(),
