@@ -101,7 +101,7 @@ final class CommandLineProcessor {
     final String bind;
 
     if (hasBind())
-      bind = line.getOptionValue(optUser);
+      bind = line.getOptionValue(optBind);
     else
       bind = BIND_DEFAULT;
 
